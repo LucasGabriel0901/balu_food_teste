@@ -1,23 +1,13 @@
 // ========================================
-// BALU FOOD - AUTH GUARD
-// Proteção das páginas internas + logout
-// Login simples para GitHub Pages / LocalStorage
+// BALU FOOD - AUTH GUARD DEMO
+// Versão temporária sem bloqueio de login
+// Para testar no GitHub Pages
 // ========================================
 
 var BALU_AUTH_SESSION_KEY = "balu_auth_session";
 
-/*
-IMPORTANTE:
-
-false = obriga o usuário a fazer login normalmente.
-true  = entra automaticamente sem login.
-
-Para mandar para sua sócia testar, deixe false.
-*/
-var BALU_DEV_AUTO_LOGIN = false;
-
 document.addEventListener("DOMContentLoaded", function () {
-protegerPaginaInterna();
+garantirSessaoDemoBalu();
 preencherDadosDaSessao();
 
 setTimeout(function () {
@@ -26,51 +16,15 @@ iniciarBotoesLogout();
 }, 150);
 });
 
-// ========================================
-// PROTEÇÃO DAS PÁGINAS INTERNAS
-// ========================================
-
-function protegerPaginaInterna() {
-var paginaAtual = window.location.pathname.toLowerCase();
-
-if (paginaAtual.indexOf("login.html") >= 0) {
-return;
-}
-
+function garantirSessaoDemoBalu() {
 var sessao = obterSessaoBalu();
 
-if (!sessao && BALU_DEV_AUTO_LOGIN === true) {
-criarSessaoDesenvolvimento();
-sessao = obterSessaoBalu();
-}
-
-if (!sessao) {
-redirecionarParaLogin();
+if (sessao && sessao.acesso_liberado === true) {
 return;
 }
 
-if (sessao.acesso_liberado === false) {
-localStorage.removeItem(BALU_AUTH_SESSION_KEY);
-redirecionarParaLogin();
-return;
-}
-
-if (!sessao.usuario || !sessao.usuario.id) {
-localStorage.removeItem(BALU_AUTH_SESSION_KEY);
-redirecionarParaLogin();
-return;
-}
-
-if (!sessao.empresa || !sessao.empresa.id) {
-localStorage.removeItem(BALU_AUTH_SESSION_KEY);
-redirecionarParaLogin();
-return;
-}
-}
-
-function criarSessaoDesenvolvimento() {
 var sessaoTeste = {
-token: "token_teste_balu",
+token: "token_demo_balu",
 acesso_liberado: true,
 motivo_bloqueio: null,
 usuario: {
@@ -117,22 +71,13 @@ return null;
 }
 }
 
-function redirecionarParaLogin() {
-var caminho = window.location.pathname.toLowerCase();
-
-if (caminho.indexOf("/pages/") >= 0) {
-window.location.href = "login.html";
-} else {
-window.location.href = "pages/login.html";
-}
-}
-
-// ========================================
-// PREENCHER DADOS DA SESSÃO NA TELA
-// ========================================
-
 function preencherDadosDaSessao() {
 var sessao = obterSessaoBalu();
+
+if (!sessao) {
+garantirSessaoDemoBalu();
+sessao = obterSessaoBalu();
+}
 
 if (!sessao) {
 return;
@@ -156,10 +101,6 @@ elementos.forEach(function (elemento) {
 elemento.textContent = texto;
 });
 }
-
-// ========================================
-// ÁREA DO USUÁRIO NO MENU LATERAL
-// ========================================
 
 function criarAreaUsuarioNoMenu() {
 var sessao = obterSessaoBalu();
@@ -242,10 +183,6 @@ var segunda = partes.length > 1 ? partes[partes.length - 1].charAt(0) : "";
 return (primeira + segunda).toUpperCase();
 }
 
-// ========================================
-// LOGOUT
-// ========================================
-
 function iniciarBotoesLogout() {
 var botoes = document.querySelectorAll("[data-auth-logout]");
 
@@ -258,25 +195,16 @@ sairDoSistema();
 
 function sairDoSistema() {
 localStorage.removeItem(BALU_AUTH_SESSION_KEY);
+garantirSessaoDemoBalu();
 
-if (typeof showToast === "function") {
-showToast("Você saiu do sistema.", "success");
+window.location.href = "dashboard.html";
 }
-
-setTimeout(function () {
-redirecionarParaLogin();
-}, 300);
-}
-
-// ========================================
-// FUNÇÕES PARA OUTROS MÓDULOS USAREM
-// ========================================
 
 function obterEmpresaIdAtual() {
 var sessao = obterSessaoBalu();
 
 if (!sessao || !sessao.empresa) {
-return null;
+return 1;
 }
 
 return sessao.empresa.id;
@@ -286,7 +214,7 @@ function obterUsuarioIdAtual() {
 var sessao = obterSessaoBalu();
 
 if (!sessao || !sessao.usuario) {
-return null;
+return 1;
 }
 
 return sessao.usuario.id;
@@ -296,41 +224,35 @@ function obterTokenAtual() {
 var sessao = obterSessaoBalu();
 
 if (!sessao) {
-return null;
+return "token_demo_balu";
 }
 
-return sessao.token || null;
+return sessao.token || "token_demo_balu";
 }
 
 function obterEmpresaNomeAtual() {
 var sessao = obterSessaoBalu();
 
 if (!sessao || !sessao.empresa) {
-return "";
+return "Empresa Teste BALU";
 }
 
-return sessao.empresa.nome_fantasia || "";
+return sessao.empresa.nome_fantasia || "Empresa Teste BALU";
 }
 
 function obterUsuarioNomeAtual() {
 var sessao = obterSessaoBalu();
 
 if (!sessao || !sessao.usuario) {
-return "";
+return "Lucas Gabriel";
 }
 
-return sessao.usuario.nome || "";
+return sessao.usuario.nome || "Lucas Gabriel";
 }
 
 function usuarioEstaLogado() {
-var sessao = obterSessaoBalu();
-
-return !!(sessao && sessao.acesso_liberado === true);
+return true;
 }
-
-// ========================================
-// SEGURANÇA DE TEXTO
-// ========================================
 
 function escaparHtml(texto) {
 if (texto === null || texto === undefined) {
