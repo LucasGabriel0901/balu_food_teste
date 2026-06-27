@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compras Realizadas | BALU Food</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/cadastros.css">
+  <link rel="stylesheet" href="../css/estoque.css">
+  <link rel="stylesheet" href="../css/financeiro.css">
+</head>
+
+<body>
+  <div class="app-shell">
+    <main class="main-wrapper">
+      <section class="page">
+
+        <div class="page-header">
+          <div>
+            <h1>Compras Realizadas</h1>
+            <p>Registre compras de insumos e embalagens para alimentar o estoque e o CMV real mensal.</p>
+          </div>
+
+          <div class="page-actions">
+            <button type="button" class="btn btn-outline" id="btnExportarCompras">
+              <i data-lucide="download"></i>
+              Exportar
+            </button>
+
+            <button type="button" class="btn btn-primary" id="btnNovaCompra" onclick="openDrawer('drawerCompra')">
+              <i data-lucide="plus"></i>
+              Nova Compra
+            </button>
+          </div>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card green">
+            <span>Total comprado no mês</span>
+            <strong id="totalComprasMes">R$ 0,00</strong>
+            <small>Soma das compras confirmadas.</small>
+          </div>
+
+          <div class="kpi-card purple">
+            <span>Compras confirmadas</span>
+            <strong id="comprasConfirmadas">0</strong>
+            <small>Compras que entram no cálculo do CMV.</small>
+          </div>
+
+          <div class="kpi-card orange">
+            <span>Compras pendentes</span>
+            <strong id="comprasPendentes">0</strong>
+            <small>Compras aguardando conferência.</small>
+          </div>
+
+          <div class="kpi-card red">
+            <span>Ticket médio</span>
+            <strong id="ticketMedioCompras">R$ 0,00</strong>
+            <small>Valor médio por compra registrada.</small>
+          </div>
+        </div>
+
+        <div class="finance-panel">
+          <div class="finance-panel-header">
+            <div>
+              <h2>Como as compras entram no CMV?</h2>
+              <p>Somente compras com status confirmado devem entrar no cálculo oficial do mês.</p>
+            </div>
+
+            <span class="badge purple">Módulo de apoio ao CMV</span>
+          </div>
+
+          <div class="calc-flow">
+            <div class="calc-flow-card">
+              <span>Estoque Inicial</span>
+              <strong id="comprasFluxoEstoqueInicial">R$ 0,00</strong>
+            </div>
+
+            <div class="calc-flow-symbol">+</div>
+
+            <div class="calc-flow-card">
+              <span>Compras Confirmadas</span>
+              <strong id="comprasFluxoCompras">R$ 0,00</strong>
+            </div>
+
+            <div class="calc-flow-symbol">-</div>
+
+            <div class="calc-flow-card">
+              <span>Estoque Final</span>
+              <strong id="comprasFluxoEstoqueFinal">R$ 0,00</strong>
+            </div>
+
+            <div class="calc-flow-symbol">=</div>
+
+            <div class="calc-flow-card result">
+              <span>CMV Real</span>
+              <strong id="comprasFluxoCmv">R$ 0,00</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="cadastro-toolbar">
+            <div class="cadastro-toolbar-left">
+              <input
+                type="search"
+                id="searchCompras"
+                class="cadastro-search"
+                placeholder="Buscar por fornecedor, nota, item ou observação..."
+              >
+            </div>
+
+            <div class="cadastro-toolbar-right">
+              <select id="filterTipoCompra" class="cadastro-filter">
+                <option value="">Todos os tipos</option>
+                <option value="Insumos">Insumos</option>
+                <option value="Embalagens">Embalagens</option>
+                <option value="Mista">Mista</option>
+              </select>
+
+              <select id="filterStatusCompra" class="cadastro-filter">
+                <option value="">Todos os status</option>
+                <option value="Confirmada">Confirmada</option>
+                <option value="Pendente">Pendente</option>
+                <option value="Cancelada">Cancelada</option>
+              </select>
+            </div>
+          </div>
+
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Fornecedor</th>
+                <th>Nota / Código</th>
+                <th>Tipo</th>
+                <th>Itens</th>
+                <th>Subtotal</th>
+                <th>Ajustes</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+
+            <tbody id="comprasTable">
+              <tr>
+                <td colspan="10" class="text-muted">
+                  Nenhuma compra registrada ainda.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </section>
+    </main>
+  </div>
+
+  <aside class="drawer" id="drawerCompra">
+    <div class="drawer-header">
+      <h2 id="drawerCompraTitle">Nova Compra</h2>
+
+      <button type="button" class="drawer-close" onclick="closeDrawer()">
+        ×
+      </button>
+    </div>
+
+    <div class="drawer-body">
+      <form id="formCompra">
+
+        <input type="hidden" id="compraId">
+
+        <div class="form-section">
+          <h3 class="form-section-title">Comprovante ou nota fiscal</h3>
+
+          <div class="image-upload-field">
+            <input type="file" id="compraImagemInput" accept="image/*" hidden>
+
+            <label for="compraImagemInput" class="image-upload-box">
+              <img id="compraImagemPreview" class="image-preview" alt="Preview da compra">
+
+              <div class="image-placeholder" id="compraImagemPlaceholder">
+                <i data-lucide="receipt"></i>
+                <strong>Adicionar comprovante</strong>
+                <small>Foto da nota, recibo ou comprovante</small>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3 class="form-section-title">Dados da compra</h3>
+
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="compraData">Data da compra *</label>
+              <input type="date" id="compraData" required>
+            </div>
+
+            <div class="form-field">
+              <label for="compraFornecedor">Fornecedor *</label>
+              <input type="text" id="compraFornecedor" placeholder="Ex: Distribuidora Central" required>
+            </div>
+
+            <div class="form-field">
+              <label for="compraNumeroNota">Nota / Código</label>
+              <input type="text" id="compraNumeroNota" placeholder="Ex: NF-12345">
+            </div>
+
+            <div class="form-field">
+              <label for="compraTipo">Tipo de compra *</label>
+              <select id="compraTipo" required>
+                <option value="">Selecione</option>
+                <option value="Insumos">Insumos</option>
+                <option value="Embalagens">Embalagens</option>
+                <option value="Mista">Mista</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label for="compraStatus">Status *</label>
+              <select id="compraStatus" required>
+                <option value="Confirmada">Confirmada</option>
+                <option value="Pendente">Pendente</option>
+                <option value="Cancelada">Cancelada</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label for="compraFormaPagamento">Forma de pagamento</label>
+              <select id="compraFormaPagamento">
+                <option value="Pix">Pix</option>
+                <option value="Dinheiro">Dinheiro</option>
+                <option value="Cartão de crédito">Cartão de crédito</option>
+                <option value="Cartão de débito">Cartão de débito</option>
+                <option value="Boleto">Boleto</option>
+                <option value="Outro">Outro</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3 class="form-section-title">Itens da compra</h3>
+
+          <div id="compraItemsContainer" class="inventory-items">
+            <div class="inventory-item compra-item">
+              <div class="inventory-item-grid">
+                <div class="form-field">
+                  <label>Tipo</label>
+                  <select class="compraItemTipo">
+                    <option value="Insumo">Insumo</option>
+                    <option value="Embalagem">Embalagem</option>
+                    <option value="Outro">Outro</option>
+                  </select>
+                </div>
+
+                <div class="form-field">
+                  <label>Item</label>
+                  <input type="text" class="compraItemNome" placeholder="Ex: Arroz, carne, marmita...">
+                </div>
+
+                <div class="form-field">
+                  <label>Quantidade</label>
+                  <input type="number" class="compraItemQuantidade" min="0" step="0.01" placeholder="0">
+                </div>
+
+                <div class="form-field">
+                  <label>Unidade</label>
+                  <select class="compraItemUnidade">
+                    <option value="unidade">Unidade</option>
+                    <option value="kg">Kg</option>
+                    <option value="g">Gramas</option>
+                    <option value="litro">Litro</option>
+                    <option value="ml">ML</option>
+                    <option value="pacote">Pacote</option>
+                    <option value="caixa">Caixa</option>
+                  </select>
+                </div>
+
+                <div class="form-field">
+                  <label>Valor unitário</label>
+                  <input type="number" class="compraItemValorUnitario" min="0" step="0.01" placeholder="0,00">
+                </div>
+
+                <div class="form-field">
+                  <label>Total</label>
+                  <input type="text" class="compraItemTotal calculated-field" readonly value="R$ 0,00">
+                </div>
+
+                <button type="button" class="btn btn-outline btn-small compraItemRemove">
+                  Remover
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <button type="button" class="btn btn-outline" id="btnAdicionarItemCompra" style="margin-top: 12px;">
+            <i data-lucide="plus"></i>
+            Adicionar item
+          </button>
+        </div>
+
+        <div class="form-section">
+          <h3 class="form-section-title">Descontos, frete e impostos</h3>
+
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="compraDesconto">Desconto</label>
+              <input type="number" id="compraDesconto" min="0" step="0.01" placeholder="0,00">
+            </div>
+
+            <div class="form-field">
+              <label for="compraFrete">Frete</label>
+              <input type="number" id="compraFrete" min="0" step="0.01" placeholder="0,00">
+            </div>
+
+            <div class="form-field">
+              <label for="compraImpostos">Impostos / taxas</label>
+              <input type="number" id="compraImpostos" min="0" step="0.01" placeholder="0,00">
+            </div>
+
+            <div class="form-field">
+              <label for="compraCompetencia">Competência do CMV</label>
+              <input type="month" id="compraCompetencia">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3 class="form-section-title">Resumo da compra</h3>
+
+          <div class="calculated-box">
+            <div class="calculated-grid">
+              <div class="calculated-item">
+                <span>Subtotal dos itens</span>
+                <strong id="compraSubtotalPreview">R$ 0,00</strong>
+              </div>
+
+              <div class="calculated-item">
+                <span>Ajustes</span>
+                <strong id="compraAjustesPreview">R$ 0,00</strong>
+              </div>
+
+              <div class="calculated-item">
+                <span>Total da compra</span>
+                <strong id="compraTotalPreview">R$ 0,00</strong>
+              </div>
+
+              <div class="calculated-item">
+                <span>Status para CMV</span>
+                <strong id="compraStatusCmvPreview">Entra no CMV</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3 class="form-section-title">Informações adicionais</h3>
+
+          <div class="form-grid">
+            <div class="form-field full">
+              <label for="compraObservacoes">Observações internas</label>
+              <textarea id="compraObservacoes" placeholder="Ex: compra emergencial, conferência pendente, fornecedor alternativo..."></textarea>
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    <div class="drawer-footer">
+      <button type="button" class="btn btn-outline" onclick="closeDrawer()">
+        Cancelar
+      </button>
+
+      <button type="submit" form="formCompra" class="btn btn-primary">
+        Salvar Compra
+      </button>
+    </div>
+  </aside>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script src="../js/app.js"></script>
+  <script src="../js/session.js"></script>
+  <script src="../js/layout.js"></script>
+  <script src="../js/auth-guard.js"></script>
+  <script src="../js/compras-realizadas.js"></script>
+
+  <script>
+  (function () {
+    function iniciarFixComprasBalu() {
+      console.log("FIX de compras BALU ativo");
+
+      window.calcularCompra = calcularCompraBaluFix;
+      window.atualizarPreviewCompra = calcularCompraBaluFix;
+
+      document.addEventListener("input", function (event) {
+        if (campoCompraBalu(event.target)) {
+          calcularCompraBaluFix();
+        }
+      }, true);
+
+      document.addEventListener("change", function (event) {
+        if (campoCompraBalu(event.target)) {
+          calcularCompraBaluFix();
+        }
+      }, true);
+
+      document.addEventListener("click", function () {
+        setTimeout(function () {
+          calcularCompraBaluFix();
+        }, 100);
+      }, true);
+
+      setTimeout(calcularCompraBaluFix, 300);
+      setTimeout(calcularCompraBaluFix, 800);
+      setTimeout(calcularCompraBaluFix, 1500);
+    }
+
+    function campoCompraBalu(campo) {
+      if (!campo) {
+        return false;
+      }
+
+      return (
+        campo.classList.contains("compraItemQuantidade") ||
+        campo.classList.contains("compraItemValorUnitario") ||
+        campo.classList.contains("compraItemNome") ||
+        campo.id === "compraDesconto" ||
+        campo.id === "compraFrete" ||
+        campo.id === "compraImpostos" ||
+        campo.id === "compraStatus"
+      );
+    }
+
+    function calcularCompraBaluFix() {
+      var itensTela = document.querySelectorAll("#compraItemsContainer .compra-item");
+      var itens = [];
+      var subtotal = 0;
+
+      itensTela.forEach(function (item) {
+        var campoTipo = item.querySelector(".compraItemTipo");
+        var campoNome = item.querySelector(".compraItemNome");
+        var campoQuantidade = item.querySelector(".compraItemQuantidade");
+        var campoUnidade = item.querySelector(".compraItemUnidade");
+        var campoValorUnitario = item.querySelector(".compraItemValorUnitario");
+        var campoTotal = item.querySelector(".compraItemTotal");
+
+        var tipo = campoTipo ? campoTipo.value : "Insumo";
+        var nome = campoNome ? campoNome.value : "";
+        var unidade = campoUnidade ? campoUnidade.value : "unidade";
+
+        var quantidade = numeroBaluCompra(campoQuantidade ? campoQuantidade.value : 0);
+        var valorUnitario = numeroBaluCompra(campoValorUnitario ? campoValorUnitario.value : 0);
+
+        var totalItem = quantidade * valorUnitario;
+
+        subtotal = subtotal + totalItem;
+
+        if (campoTotal) {
+          campoTotal.value = moedaBaluCompra(totalItem);
+        }
+
+        if (nome && quantidade > 0 && valorUnitario > 0) {
+          itens.push({
+            tipo: tipo,
+            nome: nome,
+            quantidade: quantidade,
+            unidade: unidade,
+            valorUnitario: valorUnitario,
+            total: totalItem
+          });
+        }
+      });
+
+      var desconto = numeroBaluCompra(valorCampoBaluCompra("compraDesconto"));
+      var frete = numeroBaluCompra(valorCampoBaluCompra("compraFrete"));
+      var impostos = numeroBaluCompra(valorCampoBaluCompra("compraImpostos"));
+
+      var ajustes = frete + impostos - desconto;
+      var totalCompra = subtotal + ajustes;
+
+      if (totalCompra < 0) {
+        totalCompra = 0;
+      }
+
+      setarBaluCompra("compraSubtotalPreview", moedaBaluCompra(subtotal));
+      setarBaluCompra("compraAjustesPreview", moedaBaluCompra(ajustes));
+      setarBaluCompra("compraTotalPreview", moedaBaluCompra(totalCompra));
+
+      var status = valorCampoBaluCompra("compraStatus") || "Confirmada";
+
+      if (status === "Confirmada") {
+        setarBaluCompra("compraStatusCmvPreview", "Entra no CMV");
+      } else {
+        setarBaluCompra("compraStatusCmvPreview", "Não entra no CMV");
+      }
+
+      return {
+        itens: itens,
+        subtotal: subtotal,
+        desconto: desconto,
+        frete: frete,
+        impostos: impostos,
+        ajustes: ajustes,
+        total: totalCompra
+      };
+    }
+
+    function valorCampoBaluCompra(id) {
+      var campo = document.getElementById(id);
+
+      if (!campo) {
+        return "";
+      }
+
+      return campo.value;
+    }
+
+    function setarBaluCompra(id, valor) {
+      var campo = document.getElementById(id);
+
+      if (!campo) {
+        return;
+      }
+
+      if (campo.tagName === "INPUT" || campo.tagName === "TEXTAREA" || campo.tagName === "SELECT") {
+        campo.value = valor;
+      } else {
+        campo.textContent = valor;
+      }
+    }
+
+    function numeroBaluCompra(valor) {
+      if (valor === null || valor === undefined || valor === "") {
+        return 0;
+      }
+
+      if (typeof valor === "number") {
+        return isNaN(valor) ? 0 : valor;
+      }
+
+      var texto = String(valor)
+        .replace("R$", "")
+        .replace("%", "")
+        .replace(/\s/g, "")
+        .trim();
+
+      if (texto.indexOf(",") >= 0) {
+        texto = texto.replace(/\./g, "").replace(",", ".");
+      }
+
+      var numero = Number(texto);
+
+      if (isNaN(numero)) {
+        return 0;
+      }
+
+      return numero;
+    }
+
+    function moedaBaluCompra(valor) {
+      var numero = Number(valor);
+
+      if (isNaN(numero)) {
+        numero = 0;
+      }
+
+      return numero.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+      });
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", iniciarFixComprasBalu);
+    } else {
+      iniciarFixComprasBalu();
+    }
+  })();
+</script>
+
+
+
+</body>
+</html>

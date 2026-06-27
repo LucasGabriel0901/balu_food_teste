@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Cadastro de Embalagens | BALU Food</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/cadastros.css">
+</head>
+
+<body>
+  <div class="app-shell">
+    <main class="main-wrapper">
+      <section class="page">
+
+    <div class="page-header">
+      <div>
+        <h1>Cadastro de Embalagens</h1>
+        <p>Cadastre embalagens, fornecedores, kits e custo médio por unidade.</p>
+      </div>
+
+      <div class="page-actions">
+        <button type="button" class="btn btn-outline" id="btnExportarEmbalagens">
+          <i data-lucide="download"></i>
+          Exportar
+        </button>
+
+        <button type="button" class="btn btn-primary" id="btnNovaEmbalagem" onclick="openDrawer('drawerEmbalagem')">
+          <i data-lucide="plus"></i>
+          Nova Embalagem
+        </button>
+      </div>
+    </div>
+
+    <div class="cadastro-summary">
+      <div class="cadastro-summary-card">
+        <span>Total de embalagens</span>
+        <strong id="totalEmbalagens">0</strong>
+      </div>
+
+      <div class="cadastro-summary-card">
+        <span>Estoque em valor</span>
+        <strong id="valorEstoqueEmbalagens">R$ 0,00</strong>
+      </div>
+
+      <div class="cadastro-summary-card">
+        <span>Embalagens com estoque baixo</span>
+        <strong id="embalagensEstoqueBaixo">0</strong>
+      </div>
+
+      <div class="cadastro-summary-card">
+        <span>Kits cadastrados</span>
+        <strong id="totalKitsEmbalagens">0</strong>
+      </div>
+    </div>
+
+    <div class="inner-tabs">
+      <button type="button" class="inner-tab active" data-tab="embalagens">
+        Embalagens
+      </button>
+
+      <button type="button" class="inner-tab" data-tab="kits">
+        Kits de Embalagens
+      </button>
+    </div>
+
+    <div id="tabEmbalagens" class="tab-content active">
+      <div class="table-card">
+        <div class="cadastro-toolbar">
+          <div class="cadastro-toolbar-left">
+            <input
+              type="search"
+              id="searchEmbalagens"
+              class="cadastro-search"
+              placeholder="Buscar por nome, código, categoria ou fornecedor..."
+            >
+          </div>
+
+          <div class="cadastro-toolbar-right">
+            <select id="filterCategoriaEmbalagem" class="cadastro-filter">
+              <option value="">Todas as categorias</option>
+              <option value="Marmitas">Marmitas</option>
+              <option value="Sacolas">Sacolas</option>
+              <option value="Talheres">Talheres</option>
+              <option value="Copos">Copos</option>
+              <option value="Potes">Potes</option>
+              <option value="Caixas">Caixas</option>
+              <option value="Outros">Outros</option>
+            </select>
+
+            <select id="filterStatusEmbalagem" class="cadastro-filter">
+              <option value="">Todos os status</option>
+              <option value="Ativo">Ativo</option>
+              <option value="Inativo">Inativo</option>
+              <option value="Estoque baixo">Estoque baixo</option>
+              <option value="Crítico">Crítico</option>
+            </select>
+          </div>
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Embalagem</th>
+              <th>Código</th>
+              <th>Categoria</th>
+              <th>Unidade</th>
+              <th>Qtd. por pacote</th>
+              <th>Preço pacote</th>
+              <th>Preço unitário</th>
+              <th>Estoque</th>
+              <th>Valor estoque</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+
+          <tbody id="embalagensTable">
+            <tr>
+              <td colspan="11" class="text-muted">
+                Nenhuma embalagem cadastrada ainda.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="tabKits" class="tab-content" style="display: none;">
+      <div class="table-card">
+        <div class="cadastro-toolbar">
+          <div class="cadastro-toolbar-left">
+            <input
+              type="search"
+              id="searchKits"
+              class="cadastro-search"
+              placeholder="Buscar por nome ou código do kit..."
+            >
+          </div>
+
+          <div class="cadastro-toolbar-right">
+            <button type="button" class="btn btn-primary" id="btnNovoKit" onclick="openDrawer('drawerKitEmbalagem')">
+              <i data-lucide="plus"></i>
+              Novo Kit
+            </button>
+          </div>
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Kit</th>
+              <th>Código</th>
+              <th>Itens</th>
+              <th>Custo total</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+
+          <tbody id="kitsEmbalagensTable">
+            <tr>
+              <td colspan="6" class="text-muted">
+                Nenhum kit de embalagens cadastrado ainda.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </section>
+</main>
+
+
+  </div>
+
+  <aside class="drawer" id="drawerEmbalagem">
+    <div class="drawer-header">
+      <h2 id="drawerEmbalagemTitle">Nova Embalagem</h2>
+
+
+  <button type="button" class="drawer-close" onclick="closeDrawer()">
+    ×
+  </button>
+</div>
+
+<div class="drawer-body">
+  <form id="formEmbalagem">
+
+    <input type="hidden" id="embalagemId">
+
+    <div class="form-section">
+      <h3 class="form-section-title">Foto da embalagem</h3>
+
+      <div class="image-upload-field">
+        <input type="file" id="embalagemImagemInput" accept="image/*" hidden>
+
+        <label for="embalagemImagemInput" class="image-upload-box">
+          <img id="embalagemImagemPreview" class="image-preview" alt="Preview da embalagem">
+
+          <div class="image-placeholder" id="embalagemImagemPlaceholder">
+            <i data-lucide="image-plus"></i>
+            <strong>Adicionar foto</strong>
+            <small>PNG, JPG ou WEBP</small>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3 class="form-section-title">Dados gerais</h3>
+
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="embalagemNome">Nome da embalagem *</label>
+          <input type="text" id="embalagemNome" placeholder="Ex: Marmita 500ml" required>
+        </div>
+
+        <div class="form-field">
+          <label for="embalagemCodigo">Código</label>
+          <input type="text" id="embalagemCodigo" placeholder="Ex: EMB-0001">
+        </div>
+
+        <div class="form-field">
+          <label for="embalagemCategoria">Categoria *</label>
+          <select id="embalagemCategoria" required>
+            <option value="">Selecione</option>
+            <option value="Marmitas">Marmitas</option>
+            <option value="Sacolas">Sacolas</option>
+            <option value="Talheres">Talheres</option>
+            <option value="Copos">Copos</option>
+            <option value="Potes">Potes</option>
+            <option value="Caixas">Caixas</option>
+            <option value="Outros">Outros</option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label for="embalagemUnidade">Unidade padrão *</label>
+          <select id="embalagemUnidade" required>
+            <option value="">Selecione</option>
+            <option value="unidade">Unidade</option>
+            <option value="pacote">Pacote</option>
+            <option value="caixa">Caixa</option>
+            <option value="fardo">Fardo</option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label for="quantidadePacote">Quantidade por pacote/caixa *</label>
+          <input type="number" id="quantidadePacote" min="1" step="1" placeholder="Ex: 100">
+        </div>
+
+        <div class="form-field">
+          <label for="embalagemStatus">Status</label>
+          <select id="embalagemStatus">
+            <option value="Ativo">Ativo</option>
+            <option value="Inativo">Inativo</option>
+          </select>
+        </div>
+
+        <div class="form-field full">
+          <label for="embalagemDescricao">Descrição</label>
+          <textarea id="embalagemDescricao" placeholder="Observações sobre a embalagem"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3 class="form-section-title">Fornecedores e preços</h3>
+
+      <div class="supplier-list">
+        <div class="supplier-card">
+          <div class="supplier-card-header">
+            <strong>Fornecedor 1</strong>
+          </div>
+
+          <div class="supplier-grid">
+            <div class="form-field">
+              <label for="embFornecedor1">Nome do fornecedor</label>
+              <input type="text" id="embFornecedor1" placeholder="Ex: Embalagens & Cia">
+            </div>
+
+            <div class="form-field">
+              <label for="embPrecoFornecedor1">Preço do pacote</label>
+              <input type="number" id="embPrecoFornecedor1" min="0" step="0.01" placeholder="0,00">
+            </div>
+          </div>
+        </div>
+
+        <div class="supplier-card">
+          <div class="supplier-card-header">
+            <strong>Fornecedor 2</strong>
+          </div>
+
+          <div class="supplier-grid">
+            <div class="form-field">
+              <label for="embFornecedor2">Nome do fornecedor</label>
+              <input type="text" id="embFornecedor2" placeholder="Opcional">
+            </div>
+
+            <div class="form-field">
+              <label for="embPrecoFornecedor2">Preço do pacote</label>
+              <input type="number" id="embPrecoFornecedor2" min="0" step="0.01" placeholder="0,00">
+            </div>
+          </div>
+        </div>
+
+        <div class="supplier-card">
+          <div class="supplier-card-header">
+            <strong>Fornecedor 3</strong>
+          </div>
+
+          <div class="supplier-grid">
+            <div class="form-field">
+              <label for="embFornecedor3">Nome do fornecedor</label>
+              <input type="text" id="embFornecedor3" placeholder="Opcional">
+            </div>
+
+            <div class="form-field">
+              <label for="embPrecoFornecedor3">Preço do pacote</label>
+              <input type="number" id="embPrecoFornecedor3" min="0" step="0.01" placeholder="0,00">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="calculated-box">
+        <h4 class="calculated-box-title">Cálculos automáticos</h4>
+
+        <div class="calculated-grid">
+          <div class="calculated-item">
+            <span>Preço médio pacote</span>
+            <strong id="embPrecoMedioPacotePreview">R$ 0,00</strong>
+          </div>
+
+          <div class="calculated-item">
+            <span>Preço médio por unidade</span>
+            <strong id="embPrecoUnitarioPreview">R$ 0,00</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3 class="form-section-title">Estoque</h3>
+
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="embEstoqueAtual">Estoque atual</label>
+          <input type="number" id="embEstoqueAtual" min="0" step="1" placeholder="0">
+        </div>
+
+        <div class="form-field">
+          <label for="embEstoqueMinimo">Estoque mínimo</label>
+          <input type="number" id="embEstoqueMinimo" min="0" step="1" placeholder="0">
+        </div>
+
+        <div class="form-field">
+          <label for="embEstoqueIdeal">Estoque ideal</label>
+          <input type="number" id="embEstoqueIdeal" min="0" step="1" placeholder="0">
+        </div>
+      </div>
+
+      <div class="calculated-box">
+        <h4 class="calculated-box-title">Resumo de estoque</h4>
+
+        <div class="calculated-grid">
+          <div class="calculated-item">
+            <span>Valor em estoque</span>
+            <strong id="embValorEstoquePreview">R$ 0,00</strong>
+          </div>
+
+          <div class="calculated-item">
+            <span>Status de estoque</span>
+            <strong id="embStatusEstoquePreview">Não calculado</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3 class="form-section-title">Informações adicionais</h3>
+
+      <div class="form-grid">
+        <div class="form-field full">
+          <label for="embObservacoes">Observações internas</label>
+          <textarea id="embObservacoes" placeholder="Ex: fornecedor preferido, material, restrições, validade..."></textarea>
+        </div>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+<div class="drawer-footer">
+  <button type="button" class="btn btn-outline" onclick="closeDrawer()">
+    Cancelar
+  </button>
+
+  <button type="submit" form="formEmbalagem" class="btn btn-primary">
+    Salvar Embalagem
+  </button>
+</div>
+
+
+  </aside>
+
+  <aside class="drawer" id="drawerKitEmbalagem">
+    <div class="drawer-header">
+      <h2 id="drawerKitTitle">Novo Kit de Embalagens</h2>
+
+
+  <button type="button" class="drawer-close" onclick="closeDrawer()">
+    ×
+  </button>
+</div>
+
+<div class="drawer-body">
+  <form id="formKitEmbalagem">
+
+    <input type="hidden" id="kitId">
+
+    <div class="form-section">
+      <h3 class="form-section-title">Foto do kit</h3>
+
+      <div class="image-upload-field">
+        <input type="file" id="kitImagemInput" accept="image/*" hidden>
+
+        <label for="kitImagemInput" class="image-upload-box">
+          <img id="kitImagemPreview" class="image-preview" alt="Preview do kit">
+
+          <div class="image-placeholder" id="kitImagemPlaceholder">
+            <i data-lucide="image-plus"></i>
+            <strong>Adicionar foto</strong>
+            <small>PNG, JPG ou WEBP</small>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3 class="form-section-title">Dados do kit</h3>
+
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="kitNome">Nome do kit *</label>
+          <input type="text" id="kitNome" placeholder="Ex: Kit Marmita Completo" required>
+        </div>
+
+        <div class="form-field">
+          <label for="kitCodigo">Código</label>
+          <input type="text" id="kitCodigo" placeholder="Ex: KIT-0001">
+        </div>
+
+        <div class="form-field full">
+          <label for="kitDescricao">Descrição</label>
+          <textarea id="kitDescricao" placeholder="Ex: marmita + tampa + talher + sacola"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3 class="form-section-title">Itens do kit</h3>
+
+      <div id="kitItemsContainer" class="kit-items">
+        <div class="kit-item">
+          <div class="kit-item-grid">
+            <div class="form-field">
+              <label>Embalagem</label>
+              <select class="kitItemEmbalagem">
+                <option value="">Selecione uma embalagem</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label>Quantidade</label>
+              <input type="number" class="kitItemQuantidade" min="0" step="1" placeholder="1">
+            </div>
+
+            <div class="form-field">
+              <label>Custo unitário</label>
+              <input type="text" class="kitItemCustoUnitario calculated-field" readonly value="R$ 0,00">
+            </div>
+
+            <button type="button" class="btn btn-outline btn-small">
+              Remover
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-outline" id="btnAdicionarItemKit" style="margin-top: 12px;">
+        <i data-lucide="plus"></i>
+        Adicionar item ao kit
+      </button>
+
+      <div class="calculated-box">
+        <h4 class="calculated-box-title">Resumo do kit</h4>
+
+        <div class="calculated-grid">
+          <div class="calculated-item">
+            <span>Total de itens</span>
+            <strong id="kitTotalItensPreview">0</strong>
+          </div>
+
+          <div class="calculated-item">
+            <span>Custo total do kit</span>
+            <strong id="kitCustoTotalPreview">R$ 0,00</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3 class="form-section-title">Status</h3>
+
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="kitStatus">Status</label>
+          <select id="kitStatus">
+            <option value="Ativo">Ativo</option>
+            <option value="Inativo">Inativo</option>
+          </select>
+        </div>
+
+        <div class="form-field full">
+          <label for="kitObservacoes">Observações internas</label>
+          <textarea id="kitObservacoes" placeholder="Observações sobre o kit"></textarea>
+        </div>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+<div class="drawer-footer">
+  <button type="button" class="btn btn-outline" onclick="closeDrawer()">
+    Cancelar
+  </button>
+
+  <button type="submit" form="formKitEmbalagem" class="btn btn-primary">
+    Salvar Kit
+  </button>
+</div>
+ 
+
+  </aside>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script src="../js/app.js"></script>
+
+  <script src="../js/session.js"></script>
+
+  <script src="../js/layout.js"></script>
+
+  <script src="../js/auth-guard.js"></script>
+
+  <script src="../js/cadastro-embalagens.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      iniciarAbasEmbalagensDireto();
+      iniciarCalculoDiretoEmbalagens();
+    });
+
+    function iniciarAbasEmbalagensDireto() {
+      var botoes = document.querySelectorAll(".inner-tab");
+
+      botoes.forEach(function (botao) {
+        botao.addEventListener("click", function () {
+          var aba = botao.getAttribute("data-tab");
+
+          botoes.forEach(function (item) {
+            item.classList.remove("active");
+          });
+
+          botao.classList.add("active");
+
+          var tabEmbalagens = document.getElementById("tabEmbalagens");
+          var tabKits = document.getElementById("tabKits");
+
+          if (tabEmbalagens) {
+            tabEmbalagens.style.display = aba === "embalagens" ? "block" : "none";
+          }
+
+          if (tabKits) {
+            tabKits.style.display = aba === "kits" ? "block" : "none";
+          }
+        });
+      });
+    }
+
+    function iniciarCalculoDiretoEmbalagens() {
+      var campos = [
+        "quantidadePacote",
+        "embPrecoFornecedor1",
+        "embPrecoFornecedor2",
+        "embPrecoFornecedor3",
+        "embEstoqueAtual",
+        "embEstoqueMinimo",
+        "embEstoqueIdeal"
+      ];
+
+      campos.forEach(function (id) {
+        var campo = document.getElementById(id);
+
+        if (campo) {
+          campo.addEventListener("input", calcularDiretoEmbalagem);
+          campo.addEventListener("change", calcularDiretoEmbalagem);
+          campo.addEventListener("keyup", calcularDiretoEmbalagem);
+        }
+      });
+
+      calcularDiretoEmbalagem();
+    }
+
+    function calcularDiretoEmbalagem() {
+      var quantidadePacote = pegarNumeroDiretoEmb("quantidadePacote");
+
+      var preco1 = pegarNumeroDiretoEmb("embPrecoFornecedor1");
+      var preco2 = pegarNumeroDiretoEmb("embPrecoFornecedor2");
+      var preco3 = pegarNumeroDiretoEmb("embPrecoFornecedor3");
+
+      var estoqueAtual = pegarNumeroDiretoEmb("embEstoqueAtual");
+      var estoqueMinimo = pegarNumeroDiretoEmb("embEstoqueMinimo");
+      var estoqueIdeal = pegarNumeroDiretoEmb("embEstoqueIdeal");
+
+      var precos = [];
+
+      if (preco1 > 0) {
+        precos.push(preco1);
+      }
+
+      if (preco2 > 0) {
+        precos.push(preco2);
+      }
+
+      if (preco3 > 0) {
+        precos.push(preco3);
+      }
+
+      var precoMedioPacote = 0;
+
+      if (precos.length > 0) {
+        var soma = 0;
+
+        precos.forEach(function (preco) {
+          soma += preco;
+        });
+
+        precoMedioPacote = soma / precos.length;
+      }
+
+      var precoUnitario = quantidadePacote > 0 ? precoMedioPacote / quantidadePacote : 0;
+      var valorEstoque = estoqueAtual * precoUnitario;
+
+      var statusEstoque = "Não calculado";
+
+      if (estoqueAtual <= 0) {
+        statusEstoque = "Crítico";
+      } else if (estoqueMinimo > 0 && estoqueAtual <= estoqueMinimo) {
+        statusEstoque = "Estoque baixo";
+      } else if (estoqueIdeal > 0 && estoqueAtual >= estoqueIdeal) {
+        statusEstoque = "Estoque ideal";
+      } else {
+        statusEstoque = "Estoque ok";
+      }
+
+      setarCampoDiretoEmb("embPrecoMedioPacotePreview", formatarMoedaDiretoEmb(precoMedioPacote));
+      setarCampoDiretoEmb("embPrecoUnitarioPreview", formatarMoedaDiretoEmb(precoUnitario));
+      setarCampoDiretoEmb("embValorEstoquePreview", formatarMoedaDiretoEmb(valorEstoque));
+      setarCampoDiretoEmb("embStatusEstoquePreview", statusEstoque);
+    }
+
+    function pegarNumeroDiretoEmb(id) {
+      var campo = document.getElementById(id);
+
+      if (!campo) {
+        return 0;
+      }
+
+      var valor = String(campo.value || "")
+        .replace("R$", "")
+        .replace("%", "")
+        .replace(/\s/g, "")
+        .trim();
+
+      if (valor.indexOf(",") >= 0) {
+        valor = valor.replace(/\./g, "").replace(",", ".");
+      }
+
+      var numero = Number(valor);
+
+      if (isNaN(numero)) {
+        return 0;
+      }
+
+      return numero;
+    }
+
+    function setarCampoDiretoEmb(id, valor) {
+      var campo = document.getElementById(id);
+
+      if (!campo) {
+        return;
+      }
+
+      if (campo.tagName === "INPUT" || campo.tagName === "TEXTAREA" || campo.tagName === "SELECT") {
+        campo.value = valor;
+      } else {
+        campo.textContent = valor;
+      }
+    }
+
+    function formatarMoedaDiretoEmb(valor) {
+      var numero = Number(valor);
+
+      if (isNaN(numero)) {
+        numero = 0;
+      }
+
+      return numero.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+      });
+    }
+  </script>
+
+</body>
+</html>

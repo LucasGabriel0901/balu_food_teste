@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>BALU Food | Painel de Controle</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../css/painel-controle.css">
+</head>
+
+<body class="painel-body">
+
+  <main id="panelLoginScreen" class="panel-login-screen">
+    <section class="panel-login-card">
+      <div class="panel-login-brand">
+        <div class="panel-login-logo">B</div>
+
+```
+    <div>
+      <strong>BALU Food</strong>
+      <span>Painel interno dos donos do SaaS</span>
+    </div>
+  </div>
+
+  <div class="panel-login-header">
+    <span class="panel-kicker">
+      <i data-lucide="shield-check"></i>
+      Acesso restrito
+    </span>
+
+    <h1>Painel de Controle</h1>
+
+    <p>
+      Área exclusiva para administrar clientes, pagamentos, planos e logs do SaaS.
+    </p>
+  </div>
+
+  <form id="formPainelLogin" class="panel-login-form">
+    <div class="panel-field">
+      <label for="adminLogin">Login interno</label>
+      <input type="text" id="adminLogin" placeholder="@lucas" required>
+    </div>
+
+    <div class="panel-field">
+      <label for="adminSenha">Senha</label>
+      <input type="password" id="adminSenha" placeholder="Digite a senha" required>
+    </div>
+
+    <div id="panelLoginAlert" class="panel-alert"></div>
+
+    <button type="submit" class="panel-primary-button">
+      Entrar no painel
+    </button>
+
+    <small class="panel-login-help">
+      Credencial de teste: @lucas / 1234
+    </small>
+  </form>
+</section>
+```
+
+  </main>
+
+  <main id="panelApp" class="panel-app is-hidden">
+
+```
+<header class="panel-topbar">
+  <div class="panel-topbar-brand">
+    <div class="panel-brand-mark">B</div>
+
+    <div>
+      <strong>BALU Food</strong>
+      <span>Painel de Controle SaaS</span>
+    </div>
+  </div>
+
+  <div class="panel-topbar-actions">
+    <button type="button" id="btnAtualizarPainel" class="panel-secondary-button">
+      <i data-lucide="refresh-cw"></i>
+      Atualizar
+    </button>
+
+    <button type="button" id="btnNovoCliente" class="panel-primary-button">
+      <i data-lucide="plus"></i>
+      Novo cliente
+    </button>
+
+    <button type="button" id="btnPainelLogout" class="panel-logout-button">
+      <i data-lucide="log-out"></i>
+      Sair
+    </button>
+  </div>
+</header>
+
+<section class="panel-main">
+
+  <div class="panel-page-intro">
+    <div>
+      <span class="panel-page-label">Painel interno</span>
+      <h1 id="panelPageTitle">Visão Geral</h1>
+      <p>
+        Controle central dos clientes, planos, pagamentos e atividades importantes do BALU Food.
+      </p>
+    </div>
+
+    <div class="panel-admin-mini">
+      <div class="panel-admin-avatar">LG</div>
+
+      <div>
+        <strong>Lucas Gabriel</strong>
+        <span>Dono do SaaS</span>
+      </div>
+    </div>
+  </div>
+
+  <nav class="panel-tabs">
+    <button class="panel-menu-item active" data-section="visao-geral">
+      <i data-lucide="layout-dashboard"></i>
+      Visão Geral
+    </button>
+
+    <button class="panel-menu-item" data-section="clientes">
+      <i data-lucide="building-2"></i>
+      Clientes
+    </button>
+
+    <button class="panel-menu-item" data-section="financeiro">
+      <i data-lucide="wallet"></i>
+      Financeiro
+    </button>
+
+    <button class="panel-menu-item" data-section="logs">
+      <i data-lucide="scroll-text"></i>
+      Logs
+    </button>
+  </nav>
+
+  <section id="section-visao-geral" class="panel-section active">
+    <div class="panel-grid-cards">
+      <article class="panel-card">
+        <span>Total de clientes</span>
+        <strong id="cardTotalClientes">0</strong>
+        <small>Clientes cadastrados no SaaS</small>
+      </article>
+
+      <article class="panel-card success">
+        <span>Clientes ativos</span>
+        <strong id="cardClientesAtivos">0</strong>
+        <small>Com acesso liberado</small>
+      </article>
+
+      <article class="panel-card warning">
+        <span>Clientes em teste</span>
+        <strong id="cardClientesTeste">0</strong>
+        <small>Período inicial</small>
+      </article>
+
+      <article class="panel-card danger">
+        <span>Inadimplentes</span>
+        <strong id="cardClientesInadimplentes">0</strong>
+        <small>Pagamento em atraso</small>
+      </article>
+
+      <article class="panel-card">
+        <span>MRR bruto</span>
+        <strong id="cardMrrBruto">R$ 0,00</strong>
+        <small>Receita recorrente mensal</small>
+      </article>
+
+      <article class="panel-card success">
+        <span>MRR líquido</span>
+        <strong id="cardMrrLiquido">R$ 0,00</strong>
+        <small>Estimativa após custos</small>
+      </article>
+
+      <article class="panel-card warning">
+        <span>Custos operacionais</span>
+        <strong id="cardCustosOperacionais">R$ 0,00</strong>
+        <small>Nuvem + domínio proporcional</small>
+      </article>
+
+      <article class="panel-card danger">
+        <span>Receita em atraso</span>
+        <strong id="cardReceitaAtraso">R$ 0,00</strong>
+        <small>Valores pendentes</small>
+      </article>
+    </div>
+
+    <div class="panel-content-grid">
+      <article class="panel-box">
+        <div class="panel-box-header">
+          <div>
+            <h2>Resumo estratégico</h2>
+            <p>Indicadores rápidos para acompanhar o crescimento do SaaS.</p>
+          </div>
+        </div>
+
+        <div class="panel-info-list">
+          <div>
+            <span>Clientes ativos</span>
+            <strong id="infoPercentualAtivos">0%</strong>
+          </div>
+
+          <div>
+            <span>Inadimplência</span>
+            <strong id="infoPercentualInadimplencia">0%</strong>
+          </div>
+
+          <div>
+            <span>Plano mais contratado</span>
+            <strong id="infoPlanoMaisContratado">-</strong>
+          </div>
+
+          <div>
+            <span>Ticket médio bruto</span>
+            <strong id="infoTicketMedio">R$ 0,00</strong>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel-box">
+        <div class="panel-box-header">
+          <div>
+            <h2>Clientes recentes</h2>
+            <p>Últimas empresas cadastradas no painel.</p>
+          </div>
+        </div>
+
+        <div id="clientesRecentesLista" class="panel-mini-list"></div>
+      </article>
+    </div>
+  </section>
+
+  <section id="section-clientes" class="panel-section">
+    <div class="panel-box">
+      <div class="panel-box-header">
+        <div>
+          <h2>Clientes do SaaS</h2>
+          <p>Controle de empresas, planos, pagamentos e acesso.</p>
+        </div>
+
+        <button type="button" id="btnAbrirNovoCliente" class="panel-primary-button small">
+          <i data-lucide="plus"></i>
+          Cadastrar cliente
+        </button>
+      </div>
+
+      <div class="panel-filters">
+        <input type="text" id="buscaClientes" placeholder="Buscar por empresa, responsável, e-mail ou status">
+
+        <select id="filtroClientes">
+          <option value="todos">Todos</option>
+          <option value="Ativo">Ativos</option>
+          <option value="Teste">Em teste</option>
+          <option value="Inadimplente">Inadimplentes</option>
+          <option value="Bloqueado">Bloqueados</option>
+          <option value="Cancelado">Cancelados</option>
+        </select>
+      </div>
+
+      <div class="panel-table-wrap">
+        <table class="panel-table">
+          <thead>
+            <tr>
+              <th>Empresa</th>
+              <th>Responsável</th>
+              <th>Plano</th>
+              <th>Status</th>
+              <th>Pagamento</th>
+              <th>Valor</th>
+              <th>Vencimento</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+
+          <tbody id="clientesTableBody">
+            <tr>
+              <td colspan="8">Carregando clientes...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="section-financeiro" class="panel-section">
+    <div class="panel-grid-cards">
+      <article class="panel-card">
+        <span>Receita bruta</span>
+        <strong id="finReceitaBruta">R$ 0,00</strong>
+        <small>Base mensal estimada</small>
+      </article>
+
+      <article class="panel-card success">
+        <span>Receita líquida</span>
+        <strong id="finReceitaLiquida">R$ 0,00</strong>
+        <small>Após custos operacionais</small>
+      </article>
+
+      <article class="panel-card warning">
+        <span>Ticket médio</span>
+        <strong id="finTicketBruto">R$ 0,00</strong>
+        <small>Por cliente ativo</small>
+      </article>
+
+      <article class="panel-card danger">
+        <span>Inadimplentes</span>
+        <strong id="finClientesInadimplentes">0</strong>
+        <small>Clientes com atraso</small>
+      </article>
+    </div>
+
+    <div class="panel-box">
+      <div class="panel-box-header">
+        <div>
+          <h2>Comparativo por plano</h2>
+          <p>Faturamento bruto, custo operacional e líquido estimado.</p>
+        </div>
+      </div>
+
+      <div class="panel-table-wrap">
+        <table class="panel-table">
+          <thead>
+            <tr>
+              <th>Plano</th>
+              <th>Clientes</th>
+              <th>Bruto mensal</th>
+              <th>Custo operacional</th>
+              <th>Líquido estimado</th>
+            </tr>
+          </thead>
+
+          <tbody id="planosFinanceiroTableBody">
+            <tr>
+              <td colspan="5">Carregando financeiro...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="section-logs" class="panel-section">
+    <div class="panel-box">
+      <div class="panel-box-header">
+        <div>
+          <h2>Logs administrativos</h2>
+          <p>Histórico de ações importantes do painel.</p>
+        </div>
+      </div>
+
+      <div class="panel-table-wrap">
+        <table class="panel-table">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Evento</th>
+              <th>Descrição</th>
+              <th>Origem</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+
+          <tbody id="logsTableBody">
+            <tr>
+              <td colspan="5">Carregando logs...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</section>
+```
+
+  </main>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script src="../js/painel-controle.js"></script>
+
+</body>
+</html>
