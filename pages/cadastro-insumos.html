@@ -98,9 +98,9 @@
             <option value="">Todos os status</option>
             <option value="Ativo">Ativo</option>
             <option value="Inativo">Inativo</option>
-            <option value="Estoque baixo">Estoque baixo</option>
             <option value="Crítico">Crítico</option>
             <option value="Atenção">Atenção</option>
+            <option value="Estoque baixo">Estoque baixo</option>
             <option value="Estoque ok">Estoque ok</option>
           </select>
         </div>
@@ -133,7 +133,7 @@
 
   </section>
 </main>
-
+```
 
   </div>
 
@@ -555,8 +555,15 @@
             <th>Grupo *</th>
             <th>Unidade</th>
             <th>Peso g</th>
-            <th>Preço</th>
+            <th>Fornecedor 1</th>
+            <th>Preço 1</th>
+            <th>Fornecedor 2</th>
+            <th>Preço 2</th>
+            <th>Fornecedor 3</th>
+            <th>Preço 3</th>
             <th>Estoque</th>
+            <th>Mínimo</th>
+            <th>Ideal</th>
             <th>Validade</th>
             <th>Status linha</th>
             <th>Ação</th>
@@ -565,7 +572,7 @@
 
         <tbody id="importInsumosPreviewTable">
           <tr>
-            <td colspan="11" class="text-muted">Carregue o modelo CSV preenchido para visualizar a prévia.</td>
+            <td colspan="18" class="text-muted">Carregue o modelo CSV preenchido para visualizar a prévia.</td>
           </tr>
         </tbody>
       </table>
@@ -576,6 +583,82 @@
 <div class="drawer-footer">
   <button type="button" class="btn btn-outline" onclick="closeDrawer()">Cancelar</button>
   <button type="button" class="btn btn-primary" id="btnConfirmarImportacaoInsumos">Importar Insumos</button>
+</div>
+
+
+  </aside>
+
+  <aside class="drawer drawer-wide" id="drawerAlertaEstoqueInsumos">
+    <div class="drawer-header">
+      <div>
+        <h2>Insumos para repor</h2>
+        <p>Lista de insumos em atenção ou em situação crítica.</p>
+      </div>
+
+
+  <button type="button" class="drawer-close" onclick="closeDrawer()">×</button>
+</div>
+
+<div class="drawer-body">
+  <div class="alert-stock-topbar">
+    <div>
+      <h3>Reposição de insumos</h3>
+      <p>Use esta visão para organizar compras e evitar falta de ingredientes na operação.</p>
+    </div>
+
+    <button type="button" class="btn btn-outline" id="btnExportarAlertaInsumos">
+      <i data-lucide="download"></i>
+      Exportar CSV
+    </button>
+  </div>
+
+  <div class="alert-stock-summary">
+    <div>
+      <span>Total em alerta</span>
+      <strong id="alertaInsumosTotal">0</strong>
+    </div>
+
+    <div>
+      <span>Críticos</span>
+      <strong id="alertaInsumosCriticos">0</strong>
+    </div>
+
+    <div>
+      <span>Em atenção</span>
+      <strong id="alertaInsumosAtencao">0</strong>
+    </div>
+  </div>
+
+  <div class="alert-stock-table-wrap">
+    <table class="data-table alert-stock-table">
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Insumo</th>
+          <th>Grupo</th>
+          <th>Unidade</th>
+          <th>Estoque atual</th>
+          <th>Mínimo</th>
+          <th>Ideal</th>
+          <th>Falta repor</th>
+          <th>Preço/kg</th>
+          <th>Valor estimado</th>
+          <th>Status</th>
+          <th>Ação</th>
+        </tr>
+      </thead>
+
+      <tbody id="alertaInsumosTable">
+        <tr>
+          <td colspan="12" class="text-muted">Nenhum insumo em alerta.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="drawer-footer">
+  <button type="button" class="btn btn-outline" onclick="closeDrawer()">Fechar</button>
 </div>
 
 
