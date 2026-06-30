@@ -102,7 +102,10 @@ border: 1px solid #e2e8f0;
 border-radius: 22px;
 padding: 18px;
 box-shadow: 0 16px 42px rgba(15, 23, 42, 0.06);
-overflow: hidden;
+overflow-x: auto;
+overflow-y: visible;
+-webkit-overflow-scrolling: touch;
+
 }
 
 .cadastro-toolbar {
