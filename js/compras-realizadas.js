@@ -1,11 +1,15 @@
 // ==============================
 // BALU FOOD - COMPRAS REALIZADAS
 // Registro de compras para alimentar estoque e CMV
-// JS ajustado com cálculo de subtotal, ajustes e total
+// Versão ajustada e sem script extra no HTML
 // ==============================
 
 var comprasCache = [];
-var BALU_COMPRAS_STORAGE_KEY = typeof BALU_KEYS !== "undefined" && BALU_KEYS.compras ? BALU_KEYS.compras : "balu_compras";
+
+var BALU_COMPRAS_STORAGE_KEY =
+typeof BALU_KEYS !== "undefined" && BALU_KEYS.compras
+? BALU_KEYS.compras
+: "balu_compras";
 
 document.addEventListener("DOMContentLoaded", function () {
 initComprasRealizadas();
@@ -16,6 +20,8 @@ comprasCache = carregarComprasLocal();
 
 initEventosCompras();
 initImagemCompra();
+garantirAoMenosUmItemCompra();
+atualizarPreviewCompra();
 renderCompras();
 
 if (window.lucide) {
@@ -47,27 +53,19 @@ salvarCompra();
 }
 
 if (search) {
-search.addEventListener("input", function () {
-renderCompras();
-});
+search.addEventListener("input", renderCompras);
 }
 
 if (filterTipo) {
-filterTipo.addEventListener("change", function () {
-renderCompras();
-});
+filterTipo.addEventListener("change", renderCompras);
 }
 
 if (filterStatus) {
-filterStatus.addEventListener("change", function () {
-renderCompras();
-});
+filterStatus.addEventListener("change", renderCompras);
 }
 
 if (btnExportar) {
-btnExportar.addEventListener("click", function () {
-exportarCompras();
-});
+btnExportar.addEventListener("click", exportarCompras);
 }
 
 if (btnAdicionarItem) {
@@ -77,13 +75,17 @@ adicionarItemCompra();
 }
 
 if (container) {
-container.addEventListener("input", function () {
+container.addEventListener("input", function (event) {
+if (campoItemCompra(event.target)) {
 atualizarPreviewCompra();
+}
 });
 
 
-container.addEventListener("change", function () {
-  atualizarPreviewCompra();
+container.addEventListener("change", function (event) {
+  if (campoItemCompra(event.target)) {
+    atualizarPreviewCompra();
+  }
 });
 
 container.addEventListener("click", function (event) {
@@ -107,34 +109,39 @@ container.addEventListener("click", function (event) {
 
 }
 
-var campos = [
+[
 "compraDesconto",
 "compraFrete",
 "compraImpostos",
 "compraStatus",
 "compraData",
-"compraCompetencia"
-];
-
-campos.forEach(function (id) {
+"compraCompetencia",
+"compraTipo"
+].forEach(function (id) {
 var campo = document.getElementById(id);
 
 
 if (campo) {
-  campo.addEventListener("input", function () {
-    atualizarPreviewCompra();
-  });
-
-  campo.addEventListener("change", function () {
-    atualizarPreviewCompra();
-  });
+  campo.addEventListener("input", atualizarPreviewCompra);
+  campo.addEventListener("change", atualizarPreviewCompra);
 }
 
 
 });
+}
 
-garantirAoMenosUmItemCompra();
-atualizarPreviewCompra();
+function campoItemCompra(campo) {
+if (!campo) {
+return false;
+}
+
+return (
+campo.classList.contains("compraItemTipo") ||
+campo.classList.contains("compraItemNome") ||
+campo.classList.contains("compraItemQuantidade") ||
+campo.classList.contains("compraItemUnidade") ||
+campo.classList.contains("compraItemValorUnitario")
+);
 }
 
 function initImagemCompra() {
@@ -147,7 +154,7 @@ return;
 }
 
 input.addEventListener("change", function () {
-var file = input.files[0];
+var file = input.files && input.files[0];
 
 
 if (!file) {
@@ -180,12 +187,11 @@ title.textContent = "Nova Compra";
 
 setValueCompra("compraData", dataAtualInput());
 setValueCompra("compraCompetencia", competenciaAtualInput());
+setValueCompra("compraStatus", "Confirmada");
+setValueCompra("compraFormaPagamento", "Pix");
 
 atualizarPreviewCompra();
-
-if (typeof openDrawer === "function") {
-openDrawer("drawerCompra");
-}
+abrirDrawerCompra();
 }
 
 function resetarFormularioCompra() {
@@ -412,11 +418,7 @@ mostrarMensagemCompra("Compra registrada com sucesso.", "success");
 }
 
 salvarComprasLocal();
-
-if (typeof closeDrawer === "function") {
-closeDrawer();
-}
-
+fecharDrawerCompra();
 resetarFormularioCompra();
 renderCompras();
 }
@@ -483,10 +485,7 @@ if (placeholder) {
 }
 
 atualizarPreviewCompra();
-
-if (typeof openDrawer === "function") {
-openDrawer("drawerCompra");
-}
+abrirDrawerCompra();
 }
 
 function excluirCompra(id) {
@@ -525,15 +524,15 @@ return item.id === id;
 }
 
 function calcularCompra() {
-var items = document.querySelectorAll(".compra-item");
+var items = document.querySelectorAll("#compraItemsContainer .compra-item");
 var itens = [];
 var subtotal = 0;
 
 items.forEach(function (item) {
-var tipo = pegarValorCampoItem(item, ".compraItemTipo");
+var tipo = pegarValorCampoItem(item, ".compraItemTipo") || "Insumo";
 var nome = pegarValorCampoItem(item, ".compraItemNome");
 var quantidade = numeroCompra(pegarValorCampoItem(item, ".compraItemQuantidade"));
-var unidade = pegarValorCampoItem(item, ".compraItemUnidade");
+var unidade = pegarValorCampoItem(item, ".compraItemUnidade") || "unidade";
 var valorUnitario = numeroCompra(pegarValorCampoItem(item, ".compraItemValorUnitario"));
 var totalItem = quantidade * valorUnitario;
 var totalInput = item.querySelector(".compraItemTotal");
@@ -620,7 +619,7 @@ return;
 }
 
 table.innerHTML = lista.map(function (compra) {
-return (
+return "" +
 "<tr>" +
 "<td>" + formatarDataCompra(compra.data) + "</td>" +
 "<td>" + textoSeguroCompra(compra.fornecedor) + "</td>" +
@@ -633,21 +632,46 @@ return (
 "<td>" + badgeStatusCompra(compra.status || "Pendente") + "</td>" +
 "<td>" +
 "<div class='table-actions'>" +
-"<button type='button' class='btn-icon' title='Editar' onclick='editarCompra(\"" + compra.id + "\")'>" +
+"<button type='button' class='btn-icon' title='Editar' data-compra-action='edit' data-compra-id='" + escapeAttrCompra(compra.id) + "'>" +
 "<i data-lucide='edit-3'></i>" +
 "</button>" +
-"<button type='button' class='btn-icon danger' title='Excluir' onclick='excluirCompra(\"" + compra.id + "\")'>" +
+"<button type='button' class='btn-icon danger' title='Excluir' data-compra-action='delete' data-compra-id='" + escapeAttrCompra(compra.id) + "'>" +
 "<i data-lucide='trash-2'></i>" +
 "</button>" +
 "</div>" +
 "</td>" +
-"</tr>"
-);
+"</tr>";
 }).join("");
+
+vincularAcoesTabelaCompras();
 
 if (window.lucide) {
 lucide.createIcons();
 }
+}
+
+function vincularAcoesTabelaCompras() {
+document.querySelectorAll("[data-compra-action]").forEach(function (botao) {
+botao.addEventListener("click", function () {
+var acao = botao.getAttribute("data-compra-action");
+var id = botao.getAttribute("data-compra-id");
+
+
+  if (!id) {
+    return;
+  }
+
+  if (acao === "edit") {
+    editarCompra(id);
+  }
+
+  if (acao === "delete") {
+    excluirCompra(id);
+  }
+});
+
+
+});
 }
 
 function filtrarCompras() {
@@ -655,36 +679,46 @@ var search = getValueCompra("searchCompras").toLowerCase();
 var tipo = getValueCompra("filterTipoCompra");
 var status = getValueCompra("filterStatusCompra");
 
-return comprasCache.filter(function (compra) {
+return comprasCache
+.filter(function (compra) {
 var texto =
 String(compra.fornecedor || "") + " " +
 String(compra.numeroNota || "") + " " +
 String(compra.tipo || "") + " " +
+String(compra.status || "") + " " +
 String(compra.observacoes || "") + " " +
-getResumoItensCompra(compra);
+getResumoItensCompra(compra) + " " +
+getTextoItensCompra(compra);
 
 
-texto = texto.toLowerCase();
+  texto = texto.toLowerCase();
 
-var passaBusca = !search || texto.indexOf(search) >= 0;
-var passaTipo = !tipo || compra.tipo === tipo;
-var passaStatus = !status || compra.status === status;
+  var passaBusca = !search || texto.indexOf(search) >= 0;
+  var passaTipo = !tipo || compra.tipo === tipo;
+  var passaStatus = !status || compra.status === status;
 
-return passaBusca && passaTipo && passaStatus;
-
-
+  return passaBusca && passaTipo && passaStatus;
+})
+.sort(function (a, b) {
+  return String(b.data || "").localeCompare(String(a.data || ""));
 });
+
+
 }
 
 function renderResumoCompras() {
 var competenciaAtual = competenciaAtualInput();
 
-var comprasConfirmadas = comprasCache.filter(function (compra) {
-return compra.status === "Confirmada" && compraPertenceCompetenciaAtual(compra, competenciaAtual);
+var comprasDoMes = comprasCache.filter(function (compra) {
+return compraPertenceCompetenciaAtual(compra, competenciaAtual);
 });
 
-var comprasPendentes = comprasCache.filter(function (compra) {
-return compra.status === "Pendente" && compraPertenceCompetenciaAtual(compra, competenciaAtual);
+var comprasConfirmadas = comprasDoMes.filter(function (compra) {
+return compra.status === "Confirmada";
+});
+
+var comprasPendentes = comprasDoMes.filter(function (compra) {
+return compra.status === "Pendente";
 });
 
 var totalComprasMes = comprasConfirmadas.reduce(function (soma, compra) {
@@ -728,6 +762,21 @@ return compra.itens.length + " item(ns)";
 return "0 item";
 }
 
+function getTextoItensCompra(compra) {
+if (!Array.isArray(compra.itens)) {
+return "";
+}
+
+return compra.itens.map(function (item) {
+return [
+item.tipo || "",
+item.nome || "",
+item.quantidade || "",
+item.unidade || ""
+].join(" ");
+}).join(" ");
+}
+
 function exportarCompras() {
 if (!comprasCache.length) {
 mostrarMensagemCompra("Não há compras para exportar.", "warning");
@@ -736,19 +785,25 @@ return;
 
 var linhas = [];
 
-linhas.push("Data;Fornecedor;Nota;Tipo;Itens;Subtotal;Ajustes;Total;Status");
+linhas.push("Data;Fornecedor;Nota;Tipo;Itens;Subtotal;Desconto;Frete;Impostos;Ajustes;Total;Status;Competencia;Forma de pagamento;Observacoes");
 
 comprasCache.forEach(function (item) {
 linhas.push([
-item.data || "",
-item.fornecedor || "",
-item.numeroNota || "",
-item.tipo || "",
-getResumoItensCompra(item),
+limparCsvCompra(item.data || ""),
+limparCsvCompra(item.fornecedor || ""),
+limparCsvCompra(item.numeroNota || ""),
+limparCsvCompra(item.tipo || ""),
+limparCsvCompra(getResumoItensCompra(item)),
 formatarNumeroCompra(item.subtotal, 2),
+formatarNumeroCompra(item.desconto, 2),
+formatarNumeroCompra(item.frete, 2),
+formatarNumeroCompra(item.impostos, 2),
 formatarNumeroCompra(item.ajustes, 2),
 formatarNumeroCompra(item.total, 2),
-item.status || ""
+limparCsvCompra(item.status || ""),
+limparCsvCompra(item.competencia || ""),
+limparCsvCompra(item.formaPagamento || ""),
+limparCsvCompra(item.observacoes || "")
 ].join(";"));
 });
 
@@ -760,7 +815,7 @@ var url = URL.createObjectURL(blob);
 var link = document.createElement("a");
 
 link.href = url;
-link.download = "balu-compras.csv";
+link.download = "balu-compras-realizadas.csv";
 link.click();
 
 URL.revokeObjectURL(url);
@@ -802,7 +857,7 @@ if (!element) {
 return "";
 }
 
-return element.value;
+return element.value || "";
 }
 
 function setValueCompra(id, value) {
@@ -821,11 +876,12 @@ return;
 }
 
 if (element.tagName === "INPUT" || element.tagName === "TEXTAREA" || element.tagName === "SELECT") {
-element.value = value;
+element.value = value === undefined || value === null ? "" : value;
 } else {
-element.textContent = value;
+element.textContent = value === undefined || value === null ? "" : value;
 }
 }
+
 function numeroCompra(valor) {
 if (valor === null || valor === undefined || valor === "") {
 return 0;
@@ -841,10 +897,12 @@ var texto = String(valor)
 .replace(/\s/g, "")
 .trim();
 
-texto = texto.replace(/./g, "").replace(",", ".");
+if (!texto) {
+return 0;
+}
 
-if (texto.indexOf(".") === -1 && String(valor).indexOf(".") >= 0 && String(valor).indexOf(",") === -1) {
-texto = String(valor).trim();
+if (texto.indexOf(",") >= 0) {
+texto = texto.replace(/./g, "").replace(",", ".");
 }
 
 var numero = Number(texto);
@@ -856,11 +914,8 @@ return 0;
 return numero;
 }
 
-function formatarMoedaCompra(valor) {
-if (typeof formatCurrency === "function") {
-return formatCurrency(valor);
-}
 
+function formatarMoedaCompra(valor) {
 var numero = numeroCompra(valor);
 
 return numero.toLocaleString("pt-BR", {
@@ -870,10 +925,6 @@ currency: "BRL"
 }
 
 function formatarNumeroCompra(valor, casas) {
-if (typeof formatNumber === "function") {
-return formatNumber(valor, casas);
-}
-
 var numero = numeroCompra(valor);
 
 return numero.toLocaleString("pt-BR", {
@@ -883,10 +934,6 @@ maximumFractionDigits: casas
 }
 
 function formatarDataCompra(data) {
-if (typeof formatDateBR === "function") {
-return formatDateBR(data);
-}
-
 if (!data) {
 return "-";
 }
@@ -908,19 +955,55 @@ return texto;
 }
 
 function badgeStatusCompra(status) {
-if (typeof getStatusBadge === "function") {
-return getStatusBadge(status);
+var classe = "badge";
+
+if (status === "Confirmada") {
+classe += " success";
+} else if (status === "Pendente") {
+classe += " warning";
+} else if (status === "Cancelada") {
+classe += " danger";
 }
 
-return "<span class='badge'>" + textoSeguroCompra(status) + "</span>";
+return "<span class='" + classe + "'>" + textoSeguroCompra(status) + "</span>";
 }
 
 function textoSeguroCompra(value) {
-if (value === null || value === undefined) {
-return "";
+return escapeHtmlCompra(value);
 }
 
-return String(value);
+function escapeHtmlCompra(valor) {
+var texto = String(valor === null || valor === undefined ? "" : valor);
+
+var amp = String.fromCharCode(38);
+var menor = String.fromCharCode(60);
+var maior = String.fromCharCode(62);
+var aspasDuplas = String.fromCharCode(34);
+var aspasSimples = String.fromCharCode(39);
+
+texto = texto.split(amp).join(amp + "amp;");
+texto = texto.split(menor).join(amp + "lt;");
+texto = texto.split(maior).join(amp + "gt;");
+texto = texto.split(aspasDuplas).join(amp + "quot;");
+texto = texto.split(aspasSimples).join(amp + "#039;");
+
+return texto;
+}
+
+function escapeAttrCompra(valor) {
+return escapeHtmlCompra(valor);
+}
+
+
+
+
+
+function limparCsvCompra(valor) {
+return String(valor || "")
+.replace(/;/g, ",")
+.replace(/\n/g, " ")
+.replace(/\r/g, " ")
+.trim();
 }
 
 function carregarComprasLocal() {
@@ -946,6 +1029,7 @@ return [];
 
 
 } catch (erro) {
+console.error("Erro ao carregar compras:", erro);
 return [];
 }
 }
@@ -969,7 +1053,7 @@ return "CMP-" + Date.now();
 
 function mostrarMensagemCompra(mensagem, tipo) {
 if (typeof showToast === "function") {
-showToast(mensagem, tipo);
+showToast(mensagem, tipo || "success");
 return;
 }
 
@@ -983,6 +1067,7 @@ return imageToBase64(file);
 
 return new Promise(function (resolve, reject) {
 var reader = new FileReader();
+
 
 reader.onload = function (event) {
   resolve(event.target.result);
@@ -998,31 +1083,37 @@ reader.readAsDataURL(file);
 });
 }
 
-// ==============================
-// REFORÇO DIRETO DO CÁLCULO DE COMPRAS
-// ==============================
-
-document.addEventListener("input", function (event) {
-if (
-event.target.classList.contains("compraItemQuantidade") ||
-event.target.classList.contains("compraItemValorUnitario") ||
-event.target.id === "compraDesconto" ||
-event.target.id === "compraFrete" ||
-event.target.id === "compraImpostos"
-) {
-atualizarPreviewCompra();
+function abrirDrawerCompra() {
+if (typeof openDrawer === "function") {
+openDrawer("drawerCompra");
+return;
 }
-});
 
-document.addEventListener("change", function (event) {
-if (
-event.target.classList.contains("compraItemQuantidade") ||
-event.target.classList.contains("compraItemValorUnitario") ||
-event.target.id === "compraDesconto" ||
-event.target.id === "compraFrete" ||
-event.target.id === "compraImpostos" ||
-event.target.id === "compraStatus"
-) {
-atualizarPreviewCompra();
+var drawer = document.getElementById("drawerCompra");
+
+if (drawer) {
+drawer.classList.add("active");
+drawer.classList.add("open");
+drawer.classList.add("is-open");
 }
-});
+}
+
+function fecharDrawerCompra() {
+if (typeof closeDrawer === "function") {
+closeDrawer();
+return;
+}
+
+var drawer = document.getElementById("drawerCompra");
+
+if (drawer) {
+drawer.classList.remove("active");
+drawer.classList.remove("open");
+drawer.classList.remove("is-open");
+}
+}
+
+window.editarCompra = editarCompra;
+window.excluirCompra = excluirCompra;
+window.atualizarPreviewCompra = atualizarPreviewCompra;
+window.calcularCompra = calcularCompra;

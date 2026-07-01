@@ -12,8 +12,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="../css/painel-controle.css">
-  
-
+  <link rel="stylesheet" href="../css/banners.css">
+  <link rel="stylesheet" href="../css/painel-banners.css">
 </head>
 
 <body class="painel-body">
@@ -23,7 +23,7 @@
       <div class="panel-login-brand">
         <div class="panel-login-logo">B</div>
 
-
+```
     <div>
       <strong>BALU Food</strong>
       <span>Painel interno dos donos do SaaS</span>
@@ -65,13 +65,13 @@
     </small>
   </form>
 </section>
-
+```
 
   </main>
 
   <main id="panelApp" class="panel-app is-hidden">
 
-
+```
 <header class="panel-topbar">
   <div class="panel-topbar-brand">
     <div class="panel-brand-mark">B</div>
@@ -140,6 +140,11 @@
     <button class="panel-menu-item" data-section="logs">
       <i data-lucide="scroll-text"></i>
       Logs
+    </button>
+
+    <button class="panel-menu-item" data-section="banners">
+      <i data-lucide="image"></i>
+      Banners
     </button>
   </nav>
 
@@ -379,24 +384,249 @@
     </div>
   </section>
 
+  <section id="section-banners" class="panel-section">
+    <div class="panel-banner-module" id="painelBannersModule">
+      <div class="panel-banner-header">
+        <div>
+          <span class="panel-banner-kicker">Publicidade</span>
+          <h2>Banners do Sistema</h2>
+          <p>Cadastre propagandas para aparecer no topo das abas do BALU Food.</p>
+        </div>
+
+        <button type="button" class="panel-primary-button small btn btn-primary" id="btnNovoBannerPublicidade">
+          <i data-lucide="plus"></i>
+          Novo Banner
+        </button>
+      </div>
+
+      <div class="panel-banner-summary">
+        <div class="panel-banner-card">
+          <span>Total de banners</span>
+          <strong id="totalBannersPublicidade">0</strong>
+        </div>
+
+        <div class="panel-banner-card">
+          <span>Banners ativos</span>
+          <strong id="totalBannersAtivos">0</strong>
+        </div>
+
+        <div class="panel-banner-card">
+          <span>Visualizações</span>
+          <strong id="totalBannersVisualizacoes">0</strong>
+        </div>
+
+        <div class="panel-banner-card">
+          <span>Cliques</span>
+          <strong id="totalBannersCliques">0</strong>
+        </div>
+      </div>
+
+      <div class="panel-banner-table-card">
+        <div class="panel-banner-toolbar">
+          <input type="search" id="searchBannersPublicidade" placeholder="Buscar campanha, título ou página...">
+
+          <select id="filterBannersStatus">
+            <option value="">Todos os status</option>
+            <option value="ativo">Ativos</option>
+            <option value="inativo">Inativos</option>
+          </select>
+        </div>
+
+        <div class="panel-table-wrap">
+          <table class="panel-table data-table">
+            <thead>
+              <tr>
+                <th>Campanha</th>
+                <th>Tipo</th>
+                <th>Páginas</th>
+                <th>Ordem</th>
+                <th>Status</th>
+                <th>Views</th>
+                <th>Cliques</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+
+            <tbody id="bannersPublicidadeTable">
+              <tr>
+                <td colspan="8" class="text-muted">Nenhum banner cadastrado ainda.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
 </section>
+
+<aside class="drawer drawer-wide" id="drawerBannerPublicidade">
+  <div class="drawer-header">
+    <div>
+      <h2 id="drawerBannerPublicidadeTitle">Novo Banner</h2>
+      <p>Cadastre a propaganda que aparecerá no topo das abas.</p>
+    </div>
+
+    <button type="button" class="drawer-close" onclick="closeDrawer()">×</button>
+  </div>
+
+  <div class="drawer-body">
+    <form id="formBannerPublicidade">
+      <input type="hidden" id="bannerPublicidadeId">
+
+      <div class="form-section">
+        <h3 class="form-section-title">Dados da campanha</h3>
+
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="bannerNome">Nome interno da campanha *</label>
+            <input type="text" id="bannerNome" placeholder="Ex: Promoção fornecedor de embalagens" required>
+          </div>
+
+          <div class="form-field">
+            <label for="bannerTag">Tag pequena</label>
+            <input type="text" id="bannerTag" placeholder="Ex: PUBLICIDADE">
+          </div>
+
+          <div class="form-field">
+            <label for="bannerTitulo">Título do banner *</label>
+            <input type="text" id="bannerTitulo" placeholder="Ex: Ofertas para sua operação" required>
+          </div>
+
+          <div class="form-field">
+            <label for="bannerSubtitulo">Subtítulo</label>
+            <input type="text" id="bannerSubtitulo" placeholder="Ex: Compre melhor e reduza seus custos">
+          </div>
+
+          <div class="form-field">
+            <label for="bannerTipoMidia">Tipo de mídia</label>
+            <select id="bannerTipoMidia">
+              <option value="arte">Arte sem imagem</option>
+              <option value="imagem">Imagem / Foto</option>
+              <option value="video">Vídeo curto por URL</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="bannerStatus">Status</label>
+            <select id="bannerStatus">
+              <option value="ativo">Ativo</option>
+              <option value="inativo">Inativo</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3 class="form-section-title">Mídia do banner</h3>
+
+        <div class="form-grid">
+          <div class="form-field full" id="bannerImagemArea">
+            <label for="bannerImagemInput">Imagem do banner</label>
+            <input type="file" id="bannerImagemInput" accept="image/*">
+            <small class="text-muted">Recomendado: 1440 x 220px, JPG/WEBP leve.</small>
+          </div>
+
+          <div class="form-field full" id="bannerVideoArea">
+            <label for="bannerMediaUrl">URL ou caminho do vídeo</label>
+            <input type="text" id="bannerMediaUrl" placeholder="../assets/banners/video.mp4">
+            <small class="text-muted">Para vídeo, use arquivo externo/caminho. Não salve vídeo pesado no localStorage.</small>
+          </div>
+
+          <div class="form-field">
+            <label for="bannerClasseVisual">Cor/estilo de fundo</label>
+            <select id="bannerClasseVisual">
+              <option value="balu-ad-gradient-1">Roxo / Laranja</option>
+              <option value="balu-ad-gradient-2">Verde</option>
+              <option value="balu-ad-gradient-3">Vermelho / Escuro</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="bannerOrdem">Ordem</label>
+            <input type="number" id="bannerOrdem" min="1" step="1" value="1">
+          </div>
+        </div>
+
+        <div class="banner-preview-box">
+          <span>Prévia</span>
+          <div id="bannerPreviewPublicidade" class="banner-preview-content">
+            O banner aparecerá aqui.
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3 class="form-section-title">Link e período</h3>
+
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="bannerLinkUrl">Link de destino</label>
+            <input type="text" id="bannerLinkUrl" placeholder="https://site-do-anunciante.com">
+          </div>
+
+          <div class="form-field">
+            <label for="bannerAbrirNovaAba">Abrir link</label>
+            <select id="bannerAbrirNovaAba">
+              <option value="true">Em nova aba</option>
+              <option value="false">Na mesma aba</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="bannerDataInicio">Data de início</label>
+            <input type="date" id="bannerDataInicio">
+          </div>
+
+          <div class="form-field">
+            <label for="bannerDataFim">Data de término</label>
+            <input type="date" id="bannerDataFim">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3 class="form-section-title">Abas onde aparece</h3>
+
+        <div class="banner-pages-grid">
+          <label><input type="checkbox" class="bannerPaginaCheck" value="todas"> Todas as abas</label>
+          <label><input type="checkbox" class="bannerPaginaCheck" value="dashboard"> Dashboard</label>
+          <label><input type="checkbox" class="bannerPaginaCheck" value="cadastro-insumos"> Insumos</label>
+          <label><input type="checkbox" class="bannerPaginaCheck" value="cadastro-embalagens"> Embalagens</label>
+          <label><input type="checkbox" class="bannerPaginaCheck" value="funcionarios"> Funcionários</label>
+          <label><input type="checkbox" class="bannerPaginaCheck" value="compras-realizadas"> Compras</label>
+          <label><input type="checkbox" class="bannerPaginaCheck" value="inventarios"> Inventários</label>
+          <label><input type="checkbox" class="bannerPaginaCheck" value="cmv-real-mensal"> CMV Real</label>
+          <label><input type="checkbox" class="bannerPaginaCheck" value="fichas-tecnicas"> Fichas Técnicas</label>
+          <label><input type="checkbox" class="bannerPaginaCheck" value="relatorios"> Relatórios</label>
+          <label><input type="checkbox" class="bannerPaginaCheck" value="configuracoes"> Configurações</label>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="drawer-footer">
+    <button type="button" class="panel-secondary-button btn btn-outline" onclick="closeDrawer()">Cancelar</button>
+    <button type="submit" form="formBannerPublicidade" class="panel-primary-button btn btn-primary">Salvar Banner</button>
+  </div>
+</aside>
+```
 
   </main>
 
- <script src="../js/app.js"></script>
+  <script src="../js/app.js"></script>
 
-<script src="../js/session.js"></script>
+  <script src="../js/session.js"></script>
 
-<script src="../js/layout.js"></script>
+  <script src="../js/layout.js"></script>
 
-<script src="../js/auth-guard.js"></script>
+  <script src="../js/auth-guard.js"></script>
 
-<script src="../js/banners.js"></script>
+  <script src="../js/banners.js"></script>
 
-<script src="../js/painel-controle.js"></script>
+  <script src="../js/painel-controle.js"></script>
 
-<script src="../js/painel-banners.js"></script>
-
+  <script src="../js/painel-banners.js"></script>
 
 </body>
 </html>
