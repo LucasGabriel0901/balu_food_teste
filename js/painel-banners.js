@@ -1,4 +1,4 @@
-// =====================================================
+﻿// =====================================================
 // BALU FOOD - PAINEL DE BANNERS
 // Cadastro e controle das propagandas do sistema
 // =====================================================
@@ -576,3 +576,4 @@ var id = botao.getAttribute("data-banner-id");
   window.excluirBannerPublicidade = excluirBannerPublicidade;
   window.alternarStatusBannerPublicidade = alternarStatusBannerPublicidade;
 })();
+

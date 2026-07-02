@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="pt-BR">
 <head>
@@ -117,6 +117,12 @@
         </div>
 
         <div class="category-card">
+          <span>Vendas / Produção</span>
+          <strong id="relatorioTotalVendasProducao">0</strong>
+          <small id="relatorioVendasProducaoResumo">Nenhum registro encontrado.</small>
+        </div>
+
+        <div class="category-card">
           <span>Saúde operacional</span>
           <strong id="relatorioSaudeOperacional">Sem dados</strong>
           <small>Baseado no CMV e estoque.</small>
@@ -220,6 +226,36 @@
     <div class="table-card">
       <div class="finance-panel-header">
         <div>
+          <h2>Vendas / Produção</h2>
+          <p>Registros manuais confirmados, pendentes ou cancelados e seus custos estimados.</p>
+        </div>
+
+        <span class="badge green">Baixa de estoque</span>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Produto</th>
+            <th>Quantidade</th>
+            <th>Canal</th>
+            <th>Status</th>
+            <th>Custo estimado</th>
+          </tr>
+        </thead>
+
+        <tbody id="relatorioVendasProducaoTable">
+          <tr>
+            <td colspan="6" class="text-muted">Nenhuma venda ou produção encontrada.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-card">
+      <div class="finance-panel-header">
+        <div>
           <h2>Itens com atenção no estoque</h2>
           <p>Insumos e embalagens com estoque baixo, crítico ou sem valor definido.</p>
         </div>
@@ -299,3 +335,4 @@
 
 </body>
 </html>
+

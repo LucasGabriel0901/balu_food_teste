@@ -6,7 +6,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>InventÃ¡rios | BALU Food</title>
+  <title>Inventários | BALU Food</title>
 
   <!-- Fonte -->
 
@@ -30,11 +30,11 @@
       <section class="page">
 
 
-    <!-- CabeÃ§alho da pÃ¡gina -->
+    <!-- Cabeçalho da página -->
     <div class="page-header">
       <div>
-        <h1>InventÃ¡rios</h1>
-        <p>Registre inventÃ¡rio inicial, parcial e final para alimentar o cÃ¡lculo do CMV real mensal.</p>
+        <h1>Inventários</h1>
+        <p>Registre inventário inicial, parcial e final para alimentar o cálculo do CMV real mensal.</p>
       </div>
 
       <div class="page-actions">
@@ -45,7 +45,7 @@
 
         <button type="button" class="btn btn-primary" id="btnNovoInventario">
           <i data-lucide="plus"></i>
-          Novo InventÃ¡rio
+          Novo Inventário
         </button>
       </div>
     </div>
@@ -53,25 +53,25 @@
     <!-- Cards superiores -->
     <div class="kpi-grid">
       <div class="kpi-card green">
-        <span>InventÃ¡rio inicial</span>
+        <span>Inventário inicial</span>
         <strong id="inventarioInicialTotal">R$ 0,00</strong>
-        <small>Estoque fÃ­sico no inÃ­cio do mÃªs.</small>
+        <small>Estoque físico no início do mês.</small>
       </div>
 
       <div class="kpi-card purple">
-        <span>InventÃ¡rio final</span>
+        <span>Inventário final</span>
         <strong id="inventarioFinalTotal">R$ 0,00</strong>
-        <small>Estoque fÃ­sico no fechamento do mÃªs.</small>
+        <small>Estoque físico no fechamento do mês.</small>
       </div>
 
       <div class="kpi-card orange">
-        <span>InventÃ¡rios registrados</span>
+        <span>Inventários registrados</span>
         <strong id="totalInventarios">0</strong>
         <small>Total de contagens salvas.</small>
       </div>
 
       <div class="kpi-card red">
-        <span>DiferenÃ§a estimada</span>
+        <span>Diferença estimada</span>
         <strong id="diferencaInventarios">R$ 0,00</strong>
         <small>Inicial - final, antes das compras.</small>
       </div>
@@ -81,8 +81,8 @@
     <div class="finance-panel">
       <div class="finance-panel-header">
         <div>
-          <h2>Fluxo do inventÃ¡rio para o CMV</h2>
-          <p>O inventÃ¡rio fÃ­sico Ã© obrigatÃ³rio para saber quanto realmente foi consumido no mÃªs.</p>
+          <h2>Fluxo do inventário para o CMV</h2>
+          <p>O inventário físico é obrigatório para saber quanto realmente foi consumido no mês.</p>
         </div>
 
         <span class="badge purple">Controle de estoque</span>
@@ -90,21 +90,21 @@
 
       <div class="calc-flow">
         <div class="calc-flow-card">
-          <span>InventÃ¡rio Inicial</span>
+          <span>Inventário Inicial</span>
           <strong id="fluxoInventarioInicial">R$ 0,00</strong>
         </div>
 
         <div class="calc-flow-symbol">+</div>
 
         <div class="calc-flow-card">
-          <span>Compras do MÃªs</span>
+          <span>Compras do Mês</span>
           <strong id="fluxoComprasMes">R$ 0,00</strong>
         </div>
 
         <div class="calc-flow-symbol">-</div>
 
         <div class="calc-flow-card">
-          <span>InventÃ¡rio Final</span>
+          <span>Inventário Final</span>
           <strong id="fluxoInventarioFinal">R$ 0,00</strong>
         </div>
 
@@ -117,24 +117,24 @@
       </div>
     </div>
 
-    <!-- Tipos de inventÃ¡rio -->
+    <!-- Tipos de inventário -->
     <div class="inventory-type-grid">
       <div class="inventory-type-card">
         <i data-lucide="calendar-plus"></i>
-        <strong>InventÃ¡rio Inicial</strong>
-        <span>Feito no primeiro dia do mÃªs ou antes da operaÃ§Ã£o comeÃ§ar.</span>
+        <strong>Inventário Inicial</strong>
+        <span>Feito no primeiro dia do mês ou antes da operação começar.</span>
       </div>
 
       <div class="inventory-type-card">
         <i data-lucide="clipboard-check"></i>
-        <strong>InventÃ¡rio Parcial</strong>
-        <span>Usado para conferÃªncias no meio do mÃªs ou auditorias internas.</span>
+        <strong>Inventário Parcial</strong>
+        <span>Usado para conferências no meio do mês ou auditorias internas.</span>
       </div>
 
       <div class="inventory-type-card">
         <i data-lucide="calendar-check"></i>
-        <strong>InventÃ¡rio Final</strong>
-        <span>Feito no Ãºltimo dia do mÃªs para fechar o CMV real.</span>
+        <strong>Inventário Final</strong>
+        <span>Feito no último dia do mês para fechar o CMV real.</span>
       </div>
     </div>
 
@@ -146,7 +146,7 @@
             type="search"
             id="searchInventarios"
             class="cadastro-search"
-            placeholder="Buscar por responsÃ¡vel, tipo, competÃªncia ou observaÃ§Ã£o..."
+            placeholder="Buscar por responsável, tipo, competência ou observação..."
           >
         </div>
 
@@ -162,7 +162,7 @@
             <option value="">Todos os status</option>
             <option value="Aberto">Aberto</option>
             <option value="Finalizado">Finalizado</option>
-            <option value="RevisÃ£o">RevisÃ£o</option>
+            <option value="Revisão">Revisão</option>
             <option value="Cancelado">Cancelado</option>
           </select>
         </div>
@@ -172,22 +172,22 @@
         <thead>
           <tr>
             <th>Data</th>
-            <th>CompetÃªncia</th>
+            <th>Competência</th>
             <th>Tipo</th>
-            <th>ResponsÃ¡vel</th>
+            <th>Responsável</th>
             <th>Itens</th>
             <th>Total Insumos</th>
             <th>Total Embalagens</th>
             <th>Total Geral</th>
             <th>Status</th>
-            <th>AÃ§Ãµes</th>
+            <th>Ações</th>
           </tr>
         </thead>
 
         <tbody id="inventariosTable">
           <tr>
             <td colspan="10" class="text-muted">
-              Nenhum inventÃ¡rio registrado ainda.
+              Nenhum inventário registrado ainda.
             </td>
           </tr>
         </tbody>
@@ -200,11 +200,11 @@
 
   </div>
 
-  <!-- Drawer de cadastro/ediÃ§Ã£o de inventÃ¡rio -->
+  <!-- Drawer de cadastro/edição de inventário -->
 
   <aside class="drawer" id="drawerInventario">
     <div class="drawer-header">
-      <h2 id="drawerInventarioTitle">Novo InventÃ¡rio</h2>
+      <h2 id="drawerInventarioTitle">Novo Inventário</h2>
 
 
   <button type="button" class="drawer-close" onclick="closeDrawer()">
@@ -219,21 +219,21 @@
 
     <!-- Dados gerais -->
     <div class="form-section">
-      <h3 class="form-section-title">Dados do inventÃ¡rio</h3>
+      <h3 class="form-section-title">Dados do inventário</h3>
 
       <div class="form-grid">
         <div class="form-field">
-          <label for="inventarioData">Data do inventÃ¡rio *</label>
+          <label for="inventarioData">Data do inventário *</label>
           <input type="date" id="inventarioData" required>
         </div>
 
         <div class="form-field">
-          <label for="inventarioCompetencia">CompetÃªncia *</label>
+          <label for="inventarioCompetencia">Competência *</label>
           <input type="month" id="inventarioCompetencia" required>
         </div>
 
         <div class="form-field">
-          <label for="inventarioTipo">Tipo de inventÃ¡rio *</label>
+          <label for="inventarioTipo">Tipo de inventário *</label>
           <select id="inventarioTipo" required>
             <option value="">Selecione</option>
             <option value="Inicial">Inicial</option>
@@ -247,32 +247,32 @@
           <select id="inventarioStatus" required>
             <option value="Aberto">Aberto</option>
             <option value="Finalizado">Finalizado</option>
-            <option value="RevisÃ£o">RevisÃ£o</option>
+            <option value="Revisão">Revisão</option>
             <option value="Cancelado">Cancelado</option>
           </select>
         </div>
 
         <div class="form-field">
-          <label for="inventarioResponsavel">ResponsÃ¡vel *</label>
+          <label for="inventarioResponsavel">Responsável *</label>
           <input type="text" id="inventarioResponsavel" placeholder="Ex: Ana Oliveira" required>
         </div>
 
         <div class="form-field">
           <label for="inventarioLocal">Local de estoque</label>
-          <input type="text" id="inventarioLocal" placeholder="Ex: Cozinha, cÃ¢mara fria, estoque seco">
+          <input type="text" id="inventarioLocal" placeholder="Ex: Cozinha, câmara fria, estoque seco">
         </div>
       </div>
     </div>
 
     <!-- Comprovante / foto -->
     <div class="form-section">
-      <h3 class="form-section-title">Foto ou comprovante do inventÃ¡rio</h3>
+      <h3 class="form-section-title">Foto ou comprovante do inventário</h3>
 
       <div class="image-upload-field">
         <input type="file" id="inventarioImagemInput" accept="image/*" hidden>
 
         <label for="inventarioImagemInput" class="image-upload-box">
-          <img id="inventarioImagemPreview" class="image-preview" alt="Preview do inventÃ¡rio">
+          <img id="inventarioImagemPreview" class="image-preview" alt="Preview do inventário">
 
           <div class="image-placeholder" id="inventarioImagemPlaceholder">
             <i data-lucide="image-plus"></i>
@@ -283,7 +283,7 @@
       </div>
     </div>
 
-    <!-- Itens do inventÃ¡rio -->
+    <!-- Itens do inventário -->
     <div class="form-section">
       <h3 class="form-section-title">Itens contados</h3>
 
@@ -305,7 +305,7 @@
             </div>
 
             <div class="form-field">
-              <label>Quantidade fÃ­sica</label>
+              <label>Quantidade física</label>
               <input type="number" class="inventarioItemQuantidade" min="0" step="0.01" placeholder="0">
             </div>
 
@@ -323,7 +323,7 @@
             </div>
 
             <div class="form-field">
-              <label>Custo unitÃ¡rio</label>
+              <label>Custo unitário</label>
               <input type="number" class="inventarioItemCustoUnitario" min="0" step="0.01" placeholder="0,00">
             </div>
 
@@ -347,7 +347,7 @@
 
     <!-- Resumo -->
     <div class="form-section">
-      <h3 class="form-section-title">Resumo do inventÃ¡rio</h3>
+      <h3 class="form-section-title">Resumo do inventário</h3>
 
       <div class="calculated-box">
         <div class="calculated-grid">
@@ -374,14 +374,14 @@
       </div>
     </div>
 
-    <!-- ObservaÃ§Ãµes -->
+    <!-- Observações -->
     <div class="form-section">
-      <h3 class="form-section-title">InformaÃ§Ãµes adicionais</h3>
+      <h3 class="form-section-title">Informações adicionais</h3>
 
       <div class="form-grid">
         <div class="form-field full">
-          <label for="inventarioObservacoes">ObservaÃ§Ãµes internas</label>
-          <textarea id="inventarioObservacoes" placeholder="Ex: divergÃªncias encontradas, produtos vencidos, perdas, ajustes..."></textarea>
+          <label for="inventarioObservacoes">Observações internas</label>
+          <textarea id="inventarioObservacoes" placeholder="Ex: divergências encontradas, produtos vencidos, perdas, ajustes..."></textarea>
         </div>
       </div>
     </div>
@@ -395,14 +395,14 @@
   </button>
 
   <button type="submit" form="formInventario" class="btn btn-primary">
-    Salvar InventÃ¡rio
+    Salvar Inventário
   </button>
 </div>
 
 
   </aside>
 
-  <!-- Ãcones -->
+  <!-- Ícones -->
 
  <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -419,4 +419,5 @@
 <script src="../js/inventarios.js"></script>
 </body>
 </html>
+
 

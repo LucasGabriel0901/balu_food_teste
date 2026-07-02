@@ -273,6 +273,7 @@ adicionarItemInventario();
 function montarItemInventarioDoCadastro(tipo, cadastro) {
 var estoqueSistema = numeroInventario(cadastro.estoqueAtual);
 var custoUnitario = obterCustoCadastroInventario(tipo, cadastro);
+var custoReferencia = obterUnidadeCustoCadastroInventario(tipo, cadastro);
 
 return {
 tipo: tipo,
@@ -282,8 +283,9 @@ nome: cadastro.nome || "",
 quantidade: estoqueSistema,
 unidade: obterUnidadeCadastroInventario(tipo, cadastro),
 custoUnitario: custoUnitario,
+custoReferencia: custoReferencia,
 estoqueSistema: estoqueSistema,
-valorSistema: estoqueSistema * custoUnitario
+valorSistema: calcularValorFisicoInventario(tipo, estoqueSistema, obterUnidadeCadastroInventario(tipo, cadastro), custoUnitario, custoReferencia)
 };
 }
 
@@ -302,6 +304,7 @@ div.innerHTML =
 "<input type='hidden' class='inventarioItemId'>" +
 "<input type='hidden' class='inventarioItemCodigo'>" +
 "<input type='hidden' class='inventarioItemEstoqueSistema'>" +
+"<input type='hidden' class='inventarioItemCustoReferencia'>" +
 "<div class='form-field'>" +
 "<label>Tipo</label>" +
 "<select class='inventarioItemTipo'>" +
@@ -370,6 +373,7 @@ setItemValueInventario(div, ".inventarioItemSistema", formatarNumeroInventario(i
 setItemValueInventario(div, ".inventarioItemQuantidade", itemSalvo.quantidade || "");
 setItemValueInventario(div, ".inventarioItemUnidade", itemSalvo.unidade || "unidade");
 setItemValueInventario(div, ".inventarioItemCustoUnitario", itemSalvo.custoUnitario || "");
+setItemValueInventario(div, ".inventarioItemCustoReferencia", itemSalvo.custoReferencia || inferirUnidadeCustoInventario(itemSalvo.tipo || "Insumo", itemSalvo.unidade || "unidade"));
 selecionarOpcaoItemInventario(div, itemSalvo);
 } else {
 atualizarSelectItemInventario(div);
@@ -468,6 +472,8 @@ return;
 
 var estoqueSistema = numeroInventario(cadastro.estoqueAtual);
 var custoUnitario = obterCustoCadastroInventario(tipo, cadastro);
+var unidade = obterUnidadeCadastroInventario(tipo, cadastro);
+var custoReferencia = obterUnidadeCustoCadastroInventario(tipo, cadastro);
 
 setItemValueInventario(item, ".inventarioItemId", cadastro.id || "");
 setItemValueInventario(item, ".inventarioItemCodigo", cadastro.codigo || "");
@@ -475,8 +481,9 @@ setItemValueInventario(item, ".inventarioItemNome", cadastro.nome || "");
 setItemValueInventario(item, ".inventarioItemEstoqueSistema", estoqueSistema);
 setItemValueInventario(item, ".inventarioItemSistema", formatarNumeroInventario(estoqueSistema, 2));
 setItemValueInventario(item, ".inventarioItemQuantidade", estoqueSistema);
-setItemValueInventario(item, ".inventarioItemUnidade", obterUnidadeCadastroInventario(tipo, cadastro));
+setItemValueInventario(item, ".inventarioItemUnidade", unidade);
 setItemValueInventario(item, ".inventarioItemCustoUnitario", numeroParaInputInventario(custoUnitario));
+setItemValueInventario(item, ".inventarioItemCustoReferencia", custoReferencia);
 }
 
 function limparVinculoItemInventario(item) {
@@ -484,6 +491,7 @@ setItemValueInventario(item, ".inventarioItemId", "");
 setItemValueInventario(item, ".inventarioItemCodigo", "");
 setItemValueInventario(item, ".inventarioItemEstoqueSistema", 0);
 setItemValueInventario(item, ".inventarioItemSistema", "0");
+setItemValueInventario(item, ".inventarioItemCustoReferencia", "");
 }
 
 function salvarInventario() {
@@ -682,9 +690,10 @@ var estoqueSistema = numeroInventario(pegarValorCampoItem(item, ".inventarioItem
 var quantidade = numeroInventario(pegarValorCampoItem(item, ".inventarioItemQuantidade"));
 var unidade = pegarValorCampoItem(item, ".inventarioItemUnidade") || "unidade";
 var custoUnitario = numeroInventario(pegarValorCampoItem(item, ".inventarioItemCustoUnitario"));
-var totalItem = quantidade * custoUnitario;
+var custoReferencia = pegarValorCampoItem(item, ".inventarioItemCustoReferencia") || inferirUnidadeCustoInventario(tipo, unidade);
+var totalItem = calcularValorFisicoInventario(tipo, quantidade, unidade, custoUnitario, custoReferencia);
 var diferencaQuantidade = quantidade - estoqueSistema;
-var diferencaValor = diferencaQuantidade * custoUnitario;
+var diferencaValor = calcularValorFisicoInventario(tipo, diferencaQuantidade, unidade, custoUnitario, custoReferencia);
 var statusDiferenca = classificarDiferencaInventario(diferencaQuantidade);
 
 setItemValueInventario(item, ".inventarioItemSistema", formatarNumeroInventario(estoqueSistema, 2));
@@ -702,6 +711,7 @@ if (nome && quantidade >= 0) {
     quantidade: quantidade,
     unidade: unidade,
     custoUnitario: custoUnitario,
+    custoReferencia: custoReferencia,
     total: totalItem,
     diferencaQuantidade: diferencaQuantidade,
     diferencaValor: diferencaValor,
@@ -760,7 +770,7 @@ if (!cadastro) {
 }
 
 cadastro.estoqueAtual = numeroInventario(item.quantidade);
-cadastro.valorEstoque = numeroInventario(item.quantidade) * numeroInventario(item.custoUnitario);
+cadastro.valorEstoque = calcularValorFisicoInventario(item.tipo, item.quantidade, item.unidade, item.custoUnitario, item.custoReferencia);
 cadastro.statusEstoque = calcularStatusEstoqueInventario(cadastro);
 cadastro.atualizadoEm = new Date().toISOString();
 ajustou = true;
@@ -980,10 +990,100 @@ return tipo === "Insumo"
 
 function obterCustoCadastroInventario(tipo, item) {
 if (tipo === "Insumo") {
-return numeroInventario(item.custoUnitario || item.precoUnitario || item.precoMedio || item.precoMedioKg || 0);
+var unidade = normalizarUnidadeMedidaInventario(item.unidadeConsumo || item.unidadeCompra || "");
+var precoMedioKg = numeroInventario(item.precoMedioKg);
+var custoUnitario = numeroInventario(item.custoUnitario || item.precoUnitario);
+var precoMedio = numeroInventario(item.precoMedio);
+
+if (ehUnidadePesoInventario(unidade) && precoMedioKg > 0) {
+  return precoMedioKg;
+}
+
+return custoUnitario || precoMedio || precoMedioKg || 0;
 }
 
 return numeroInventario(item.precoUnitario || item.precoMedioPacote || 0);
+}
+
+function obterUnidadeCustoCadastroInventario(tipo, item) {
+if (tipo === "Insumo") {
+var unidade = normalizarUnidadeMedidaInventario(item.unidadeConsumo || item.unidadeCompra || "");
+var precoMedioKg = numeroInventario(item.precoMedioKg);
+
+if (ehUnidadePesoInventario(unidade) && precoMedioKg > 0) {
+  return "kg";
+}
+
+if (unidade === "un" || unidade === "unidade") {
+  return "unidade";
+}
+
+return unidade || "unidade";
+}
+
+return "unidade";
+}
+
+function inferirUnidadeCustoInventario(tipo, unidade) {
+var unidadeNormalizada = normalizarUnidadeMedidaInventario(unidade);
+
+if (tipo === "Insumo" && ehUnidadePesoInventario(unidadeNormalizada)) {
+return "kg";
+}
+
+return unidadeNormalizada || "unidade";
+}
+
+function calcularValorFisicoInventario(tipo, quantidade, unidadeQuantidade, custoUnitario, unidadeCusto) {
+var quantidadeNumero = numeroInventario(quantidade);
+var custoNumero = numeroInventario(custoUnitario);
+var unidadeQtd = normalizarUnidadeMedidaInventario(unidadeQuantidade);
+var unidadeValor = normalizarUnidadeMedidaInventario(unidadeCusto);
+
+if (tipo === "Insumo" && ehUnidadePesoInventario(unidadeQtd) && unidadeValor === "kg") {
+if (unidadeQtd === "g") {
+  return (quantidadeNumero / 1000) * custoNumero;
+}
+
+return quantidadeNumero * custoNumero;
+}
+
+if (tipo === "Insumo" && unidadeQtd === "ml" && unidadeValor === "litro") {
+return (quantidadeNumero / 1000) * custoNumero;
+}
+
+return quantidadeNumero * custoNumero;
+}
+
+function ehUnidadePesoInventario(unidade) {
+var unidadeNormalizada = normalizarUnidadeMedidaInventario(unidade);
+return unidadeNormalizada === "g" || unidadeNormalizada === "kg";
+}
+
+function normalizarUnidadeMedidaInventario(unidade) {
+var texto = normalizarTextoInventario(unidade);
+
+if (["g", "gr", "grama", "gramas"].indexOf(texto) >= 0) {
+return "g";
+}
+
+if (["kg", "quilo", "quilos", "kilograma", "kilogramas"].indexOf(texto) >= 0) {
+return "kg";
+}
+
+if (["ml", "mililitro", "mililitros"].indexOf(texto) >= 0) {
+return "ml";
+}
+
+if (["l", "lt", "litro", "litros"].indexOf(texto) >= 0) {
+return "litro";
+}
+
+if (["un", "und", "unid", "unidade", "unidades"].indexOf(texto) >= 0) {
+return "unidade";
+}
+
+return texto || "unidade";
 }
 
 function calcularStatusEstoqueInventario(item) {

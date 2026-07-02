@@ -1,4 +1,4 @@
-// ==============================
+﻿// ==============================
 // BALU FOOD - CONFIGURAÇÕES
 // Dados da empresa, plano, assinatura e preferências
 // ==============================
@@ -109,8 +109,8 @@ responsavel: "Lucas Gabriel",
 telefone: "",
 email: "lucas@balufood.com.br",
 cidade: "Guarulhos",
-plano: "Pro",
-valorPlano: 350,
+plano: "Plano único",
+valorPlano: 250,
 statusConta: "Ativo",
 statusPagamento: "Em dia",
 dataInicio: formatarDataInput(hoje),
@@ -137,8 +137,8 @@ setValueConfig("configTelefone", config.telefone);
 setValueConfig("configEmail", config.email);
 setValueConfig("configCidade", config.cidade);
 
-setValueConfig("configPlano", config.plano);
-setValueConfig("configValorPlano", numeroParaInputConfig(config.valorPlano));
+setValueConfig("configPlano", "Plano único");
+setValueConfig("configValorPlano", numeroParaInputConfig(250));
 setValueConfig("configStatusConta", config.statusConta);
 setValueConfig("configStatusPagamento", config.statusPagamento);
 setValueConfig("configDataInicio", config.dataInicio);
@@ -158,7 +158,7 @@ atualizarResumoConfiguracoes();
 function salvarConfiguracoes() {
 var nomeEmpresa = getValueConfig("configNomeEmpresa");
 var responsavel = getValueConfig("configResponsavel");
-var plano = getValueConfig("configPlano");
+var plano = "Plano único";
 
 if (!nomeEmpresa) {
 mensagemConfiguracoes("Informe o nome da empresa.", "warning");
@@ -185,8 +185,8 @@ telefone: getValueConfig("configTelefone"),
 email: getValueConfig("configEmail"),
 cidade: getValueConfig("configCidade"),
 
-plano: plano,
-valorPlano: numeroConfig(getValueConfig("configValorPlano")),
+plano: "Plano único",
+valorPlano: 250,
 statusConta: getValueConfig("configStatusConta"),
 statusPagamento: getValueConfig("configStatusPagamento"),
 dataInicio: getValueConfig("configDataInicio"),
@@ -253,7 +253,7 @@ mensagemConfiguracoes("Erro ao salvar configurações.", "danger");
 
 function atualizarResumoConfiguracoes() {
 var nomeEmpresa = getValueConfig("configNomeEmpresa") || "Empresa Teste BALU";
-var plano = getValueConfig("configPlano") || "Pro";
+var plano = "Plano único";
 var statusConta = getValueConfig("configStatusConta") || "Ativo";
 var statusPagamento = getValueConfig("configStatusPagamento") || "Em dia";
 
@@ -264,24 +264,8 @@ setTextConfig("configResumoPagamento", statusPagamento);
 }
 
 function aplicarValorAutomaticoPlano() {
-var plano = getValueConfig("configPlano");
-var valorAtual = numeroConfig(getValueConfig("configValorPlano"));
-
-if (valorAtual > 0) {
-return;
-}
-
-if (plano === "Básico") {
-setValueConfig("configValorPlano", "175");
-}
-
-if (plano === "Pro") {
-setValueConfig("configValorPlano", "350");
-}
-
-if (plano === "Premium") {
-setValueConfig("configValorPlano", "500");
-}
+setValueConfig("configPlano", "Plano único");
+setValueConfig("configValorPlano", "250");
 }
 
 function getValueConfig(id) {
@@ -392,3 +376,4 @@ if (window.lucide) {
 lucide.createIcons();
 }
 }
+

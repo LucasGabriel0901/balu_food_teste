@@ -1,4 +1,4 @@
-// ==============================
+﻿// ==============================
 // BALU FOOD - APP GLOBAL
 // Funções reutilizáveis do sistema
 // ==============================
@@ -18,6 +18,7 @@ inventarios: "balu_inventarios",
 cmv: "balu_cmv_mensal",
 fichasTecnicas: "balu_fichas_tecnicas",
 fichas_tecnicas: "balu_fichas_tecnicas",
+vendasProducao: "balu_vendas_producao",
 faturamentoMensal: "balu_faturamento_mensal",
 banners: "balu_publicidade_banners",
 configuracoes: "balu_configuracoes_empresa"
@@ -26,11 +27,82 @@ configuracoes: "balu_configuracoes_empresa"
 const BALU_KEY_ALIASES = {
 compras: ["balu_compras"],
 cmv: ["balu_cmv"],
-fichasTecnicas: ["balu_fichas_tecnicas_v2", "balu_fichas_tecnicas"]
+fichasTecnicas: ["balu_fichas_tecnicas_v2", "balu_fichas_tecnicas"],
+vendasProducao: ["balu_vendas_manuais"]
 };
 
 window.BALU_KEYS = BALU_KEYS;
 window.BALU_KEY_ALIASES = BALU_KEY_ALIASES;
+
+const BALU_ICON_FALLBACKS = {
+"edit-3": "E",
+trash: "X",
+"trash-2": "X",
+settings: "⚙",
+bell: "!",
+plus: "+",
+download: "↓",
+upload: "↑",
+"file-down": "↓",
+save: "S",
+"refresh-cw": "↻",
+menu: "☰",
+"image-plus": "+",
+image: "IMG",
+power: "⏻",
+"log-out": "SAIR"
+};
+
+function baluRefreshIcons() {
+if (window.lucide && typeof window.lucide.createIcons === "function") {
+window.lucide.createIcons();
+}
+
+baluApplyIconFallbacks();
+}
+
+function baluApplyIconFallbacks() {
+document.querySelectorAll("[data-lucide]").forEach(function (icon) {
+if (icon.querySelector("svg") || icon.textContent.trim()) {
+  return;
+}
+
+var name = icon.getAttribute("data-lucide") || "";
+icon.classList.add("icon-fallback");
+icon.textContent = BALU_ICON_FALLBACKS[name] || name.slice(0, 2).toUpperCase() || "?";
+});
+}
+
+if (document.readyState === "loading") {
+document.addEventListener("DOMContentLoaded", function () {
+baluRefreshIcons();
+baluWatchIconFallbacks();
+});
+} else {
+baluRefreshIcons();
+baluWatchIconFallbacks();
+}
+
+function baluWatchIconFallbacks() {
+if (!window.MutationObserver || window.__baluIconObserverStarted) {
+return;
+}
+
+window.__baluIconObserverStarted = true;
+
+var timeoutId = null;
+var observer = new MutationObserver(function () {
+clearTimeout(timeoutId);
+timeoutId = setTimeout(baluApplyIconFallbacks, 60);
+});
+
+observer.observe(document.body, {
+childList: true,
+subtree: true
+});
+}
+
+window.baluRefreshIcons = baluRefreshIcons;
 
 // ==============================
 // Números e formatação BR
@@ -165,6 +237,10 @@ for (let i = 0; i < storageKeys.length; i++) {
   if (!data) continue;
 
   const parsed = JSON.parse(data);
+
+  if (i === 0 && isEmptyStorageValue(data) && storageKeys.length > 1) {
+    continue;
+  }
 
   if (i > 0 && isEmptyStorageValue(localStorage.getItem(storageKeys[0]))) {
     localStorage.setItem(storageKeys[0], JSON.stringify(parsed));
@@ -549,3 +625,4 @@ closeDrawer();
 }
 });
 });
+

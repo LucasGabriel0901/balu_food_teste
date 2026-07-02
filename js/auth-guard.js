@@ -1,4 +1,4 @@
-// ========================================
+﻿// ========================================
 // BALU FOOD - AUTH GUARD DEMO
 // Versão temporária sem bloqueio de login
 // Para testar no GitHub Pages
@@ -266,3 +266,4 @@ return String(texto)
 .replace(/"/g, String.fromCharCode(38) + "quot;")
 .replace(/'/g, String.fromCharCode(38) + "#039;");
 }
+

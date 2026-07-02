@@ -1,4 +1,4 @@
-// ==============================
+﻿// ==============================
 // BALU FOOD - CMV REAL MENSAL
 // Fechamento mensal: Estoque Inicial + Compras - Estoque Final
 // ==============================
@@ -109,6 +109,7 @@ setValue("cmvCompetencia", competenciaAtualInput());
 setValue("cmvDataFechamento", dataAtualInput());
 setValue("cmvResponsavel", "Lucas Gabriel");
 setValue("cmvStatus", "Aberto");
+setValue("cmvFaturamento", obterFaturamentoMensalSalvo());
 
 preencherValoresAutomaticos();
 atualizarPreviewCmv();
@@ -362,7 +363,7 @@ renderResumoCmv();
 if (lista.length === 0) {
 table.innerHTML =
 "<tr>" +
-"<td colspan='10' class='text-muted'>Nenhum fechamento de CMV encontrado.</td>" +
+"<td colspan='10' class='text-muted'>Nenhum fechamento salvo ainda. Clique em Novo Fechamento para calcular.</td>" +
 "</tr>";
 
 return;
@@ -474,7 +475,7 @@ setText("cmvPercentualMes", formatPercent(0));
 setText("cmvStatusMes", "Não calculado");
 
 setText("cmvResultadoPrincipal", formatCurrency(0));
-setText("cmvResultadoDescricao", "Nenhum fechamento mensal foi salvo ainda.");
+setText("cmvResultadoDescricao", "Nenhum fechamento salvo ainda. Clique em Novo Fechamento para calcular.");
 
 setText("cmvResumoEstoqueInicial", formatCurrency(0));
 setText("cmvResumoCompras", formatCurrency(0));
@@ -566,6 +567,15 @@ return soma;
 
 
 }, 0);
+}
+
+function obterFaturamentoMensalSalvo() {
+try {
+var valor = localStorage.getItem(BALU_KEYS.faturamentoMensal);
+return safeNumber(valor) > 0 ? safeNumber(valor) : "";
+} catch (erro) {
+return "";
+}
 }
 
 function exportarCmv() {
@@ -666,3 +676,4 @@ return "";
 
 return String(value);
 }
+

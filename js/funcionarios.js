@@ -1,4 +1,4 @@
-// ==============================
+﻿// ==============================
 // BALU FOOD - FUNCIONÁRIOS E MÃO DE OBRA
 // CLT, Freelancer, Pró-labore e MEI
 // ==============================
@@ -963,3 +963,5 @@ if (window.lucide) {
 lucide.createIcons();
 }
 }
+
+

@@ -1,4 +1,4 @@
-// ========================================
+﻿// ========================================
 // BALU FOOD - LOGIN DEMONSTRATIVO
 // Funciona no GitHub Pages usando localStorage
 // ========================================
@@ -274,3 +274,4 @@ function limparSessaoLoginTeste() {
 localStorage.removeItem(BALU_AUTH_SESSION_KEY);
 mostrarMensagemLogin("Sessão limpa. Faça login novamente.", "success");
 }
+

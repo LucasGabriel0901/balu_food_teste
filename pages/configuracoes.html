@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="pt-BR">
 <head>
@@ -52,8 +52,8 @@
 
       <div class="kpi-card green">
         <span>Plano atual</span>
-        <strong id="configResumoPlano">Pro</strong>
-        <small>Plano ativo do cliente.</small>
+        <strong id="configResumoPlano">Plano único</strong>
+        <small>R$ 250,00/mês.</small>
       </div>
 
       <div class="kpi-card orange">
@@ -139,7 +139,7 @@
         <div class="finance-panel-header">
           <div>
             <h2>Plano e assinatura</h2>
-            <p>Controle administrativo do plano, mensalidade e status do cliente.</p>
+            <p>Controle administrativo da assinatura fixa do cliente.</p>
           </div>
 
           <span class="badge green">Assinatura</span>
@@ -149,15 +149,13 @@
           <div class="form-field">
             <label for="configPlano">Plano *</label>
             <select id="configPlano" required>
-              <option value="Básico">Básico</option>
-              <option value="Pro">Pro</option>
-              <option value="Premium">Premium</option>
+              <option value="Plano único">Plano único - R$ 250,00/mês</option>
             </select>
           </div>
 
           <div class="form-field">
             <label for="configValorPlano">Valor mensal</label>
-            <input type="text" id="configValorPlano" inputmode="decimal" placeholder="Ex: 350,00">
+            <input type="text" id="configValorPlano" inputmode="decimal" value="250,00" readonly>
           </div>
 
           <div class="form-field">
@@ -256,7 +254,7 @@
         <div class="form-grid">
           <div class="form-field full">
             <label for="configObservacoes">Observações</label>
-            <textarea id="configObservacoes" placeholder="Ex: Cliente entrou pelo plano Pro, pagamento via Pix, suporte mensal incluso..."></textarea>
+            <textarea id="configObservacoes" placeholder="Ex: Pagamento via Pix, suporte mensal incluso, observações administrativas..."></textarea>
           </div>
         </div>
       </div>
@@ -299,3 +297,4 @@
 
 </body>
 </html>
+

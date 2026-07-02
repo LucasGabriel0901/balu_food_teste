@@ -1,4 +1,4 @@
-// ==============================
+﻿// ==============================
 // BALU FOOD - LAYOUT GLOBAL
 // Sidebar branca + Header reutilizável
 // ==============================
@@ -34,6 +34,16 @@ href: "cadastro-embalagens.html",
 icon: "box"
 },
 {
+label: "Fornecedores",
+href: "fornecedores.html",
+icon: "truck"
+},
+{
+label: "Produtos / Cardápio",
+href: "produtos.html",
+icon: "book-open"
+},
+{
 label: "Funcionários",
 href: "funcionarios.html",
 icon: "users"
@@ -41,12 +51,22 @@ icon: "users"
 ]
 },
 {
-title: "Compras",
+title: "Operação",
 links: [
 {
 label: "Compras Realizadas",
 href: "compras-realizadas.html",
 icon: "shopping-cart"
+},
+{
+label: "Vendas / Produção",
+href: "vendas-producao.html",
+icon: "receipt-text"
+},
+{
+label: "Produção",
+href: "producao.html",
+icon: "chef-hat"
 }
 ]
 },
@@ -67,12 +87,22 @@ icon: "bar-chart-3"
 label: "Fichas Técnicas",
 href: "fichas-tecnicas.html",
 icon: "utensils"
+},
+{
+label: "Precificação",
+href: "precificacao.html",
+icon: "calculator"
 }
 ]
 },
 {
 title: "Gestão",
 links: [
+{
+label: "Faturamento",
+href: "faturamento.html",
+icon: "wallet"
+},
 {
 label: "Relatórios",
 href: "relatorios.html",
@@ -82,6 +112,11 @@ icon: "file-bar-chart"
 label: "Configurações",
 href: "configuracoes.html",
 icon: "settings"
+},
+{
+label: "Central de Ajuda",
+href: "central-ajuda.html",
+icon: "circle-help"
 }
 ]
 }
@@ -290,13 +325,20 @@ var titles = {
 "dashboard.html": "Dashboard",
 "cadastro-insumos.html": "Cadastro de Insumos",
 "cadastro-embalagens.html": "Cadastro de Embalagens",
+"fornecedores.html": "Fornecedores",
+"produtos.html": "Produtos / Cardápio",
 "funcionarios.html": "Funcionários e Mão de Obra",
 "compras-realizadas.html": "Compras Realizadas",
+"vendas-producao.html": "Vendas / Produção",
+"producao.html": "Produção",
 "inventarios.html": "Inventários",
 "cmv-real-mensal.html": "CMV Real Mensal",
 "fichas-tecnicas.html": "Fichas Técnicas",
+"precificacao.html": "Precificação",
+"faturamento.html": "Faturamento",
 "relatorios.html": "Relatórios",
-"configuracoes.html": "Configurações"
+"configuracoes.html": "Configurações",
+"central-ajuda.html": "Central de Ajuda"
 };
 
 return titles[currentPage] || "BALU Food";
@@ -510,3 +552,4 @@ reader.readAsDataURL(file);
 document.addEventListener("DOMContentLoaded", function () {
 renderLayout();
 });
+

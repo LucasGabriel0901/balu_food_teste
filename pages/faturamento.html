@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Faturamento | BALU Food</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/banners.css">
+  <link rel="stylesheet" href="../css/cadastros.css">
+  <link rel="stylesheet" href="../css/financeiro.css">
+</head>
+
+<body>
+  <div class="app-shell">
+    <main class="main-wrapper">
+      <section class="page">
+        <div class="page-header">
+          <div>
+            <h1>Faturamento</h1>
+            <p>Registre faturamento diário ou mensal para apoiar CMV percentual, lucro e margem.</p>
+          </div>
+
+          <div class="page-actions">
+            <button type="button" class="btn btn-primary" id="btnNovoFaturamento">
+              <i data-lucide="plus"></i>
+              Novo Registro
+            </button>
+          </div>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card green">
+            <span>Faturamento do mês</span>
+            <strong id="fatMes">R$ 0,00</strong>
+            <small>Registros confirmados no mês atual.</small>
+          </div>
+
+          <div class="kpi-card purple">
+            <span>Faturamento de hoje</span>
+            <strong id="fatHoje">R$ 0,00</strong>
+            <small>Total lançado para hoje.</small>
+          </div>
+
+          <div class="kpi-card orange">
+            <span>Ticket médio</span>
+            <strong id="fatTicket">R$ 0,00</strong>
+            <small>Média dos registros confirmados.</small>
+          </div>
+
+          <div class="kpi-card red">
+            <span>Registros do mês</span>
+            <strong id="fatRegistrosMes">0</strong>
+            <small>Quantidade de lançamentos.</small>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Canal</th>
+                <th>Valor</th>
+                <th>Observações</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+
+            <tbody id="faturamentoTable">
+              <tr>
+                <td colspan="6" class="text-muted">Nenhum registro de faturamento ainda.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <aside class="drawer" id="drawerFaturamento">
+    <div class="drawer-header">
+      <h2 id="drawerFaturamentoTitle">Novo Registro</h2>
+      <button type="button" class="drawer-close" onclick="closeDrawer()">×</button>
+    </div>
+
+    <div class="drawer-body">
+      <form id="formFaturamento">
+        <input type="hidden" id="fatId">
+
+        <div class="form-section">
+          <h3 class="form-section-title">Dados do faturamento</h3>
+
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="fatData">Data *</label>
+              <input type="date" id="fatData" required>
+            </div>
+
+            <div class="form-field">
+              <label for="fatCanal">Canal</label>
+              <select id="fatCanal">
+                <option value="Balcão">Balcão</option>
+                <option value="Delivery">Delivery</option>
+                <option value="iFood">iFood</option>
+                <option value="WhatsApp">WhatsApp</option>
+                <option value="Outro">Outro</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label for="fatValor">Valor *</label>
+              <input type="number" id="fatValor" min="0" step="0.01" required>
+            </div>
+
+            <div class="form-field">
+              <label for="fatStatus">Status</label>
+              <select id="fatStatus">
+                <option value="Confirmado">Confirmado</option>
+                <option value="Pendente">Pendente</option>
+                <option value="Cancelado">Cancelado</option>
+              </select>
+            </div>
+
+            <div class="form-field full">
+              <label for="fatObservacoes">Observações</label>
+              <textarea id="fatObservacoes"></textarea>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="drawer-footer">
+      <button type="button" class="btn btn-outline" onclick="closeDrawer()">Cancelar</button>
+      <button type="submit" form="formFaturamento" class="btn btn-primary">Salvar Registro</button>
+    </div>
+  </aside>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/session.js"></script>
+  <script src="../js/layout.js"></script>
+  <script src="../js/auth-guard.js"></script>
+  <script src="../js/banners.js"></script>
+  <script src="../js/faturamento.js"></script>
+</body>
+</html>

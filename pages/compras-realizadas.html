@@ -45,7 +45,7 @@
 
         <div class="kpi-grid">
           <div class="kpi-card green">
-            <span>Total comprado no mÃªs</span>
+            <span>Total comprado no mês</span>
             <strong id="totalComprasMes">R$ 0,00</strong>
             <small>Soma das compras confirmadas.</small>
           </div>
@@ -53,19 +53,19 @@
           <div class="kpi-card purple">
             <span>Compras confirmadas</span>
             <strong id="comprasConfirmadas">0</strong>
-            <small>Compras que entram no cÃ¡lculo do CMV.</small>
+            <small>Compras que entram no cálculo do CMV.</small>
           </div>
 
           <div class="kpi-card orange">
             <span>Compras pendentes</span>
             <strong id="comprasPendentes">0</strong>
-            <small>Compras aguardando conferÃªncia.</small>
+            <small>Compras aguardando conferência.</small>
           </div>
 
           <div class="kpi-card red">
-            <span>Ticket mÃ©dio</span>
+            <span>Ticket médio</span>
             <strong id="ticketMedioCompras">R$ 0,00</strong>
-            <small>Valor mÃ©dio por compra registrada.</small>
+            <small>Valor médio por compra registrada.</small>
           </div>
         </div>
 
@@ -73,10 +73,10 @@
           <div class="finance-panel-header">
             <div>
               <h2>Como as compras entram no CMV?</h2>
-              <p>Somente compras com status confirmado devem entrar no cÃ¡lculo oficial do mÃªs.</p>
+              <p>Somente compras com status confirmado devem entrar no cálculo oficial do mês.</p>
             </div>
 
-            <span class="badge purple">MÃ³dulo de apoio ao CMV</span>
+            <span class="badge purple">Módulo de apoio ao CMV</span>
           </div>
 
           <div class="calc-flow">
@@ -115,7 +115,7 @@
                 type="search"
                 id="searchCompras"
                 class="cadastro-search"
-                placeholder="Buscar por fornecedor, nota, item ou observaÃ§Ã£o..."
+                placeholder="Buscar por fornecedor, nota, item ou observação..."
               >
             </div>
 
@@ -141,14 +141,14 @@
               <tr>
                 <th>Data</th>
                 <th>Fornecedor</th>
-                <th>Nota / CÃ³digo</th>
+                <th>Nota / Código</th>
                 <th>Tipo</th>
                 <th>Itens</th>
                 <th>Subtotal</th>
                 <th>Ajustes</th>
                 <th>Total</th>
                 <th>Status</th>
-                <th>AÃ§Ãµes</th>
+                <th>Ações</th>
               </tr>
             </thead>
 
@@ -213,7 +213,7 @@
             </div>
 
             <div class="form-field">
-              <label for="compraNumeroNota">Nota / CÃ³digo</label>
+              <label for="compraNumeroNota">Nota / Código</label>
               <input type="text" id="compraNumeroNota" placeholder="Ex: NF-12345">
             </div>
 
@@ -241,8 +241,8 @@
               <select id="compraFormaPagamento">
                 <option value="Pix">Pix</option>
                 <option value="Dinheiro">Dinheiro</option>
-                <option value="CartÃ£o de crÃ©dito">CartÃ£o de crÃ©dito</option>
-                <option value="CartÃ£o de dÃ©bito">CartÃ£o de dÃ©bito</option>
+                <option value="Cartão de crédito">Cartão de crédito</option>
+                <option value="Cartão de débito">Cartão de débito</option>
                 <option value="Boleto">Boleto</option>
                 <option value="Outro">Outro</option>
               </select>
@@ -289,7 +289,7 @@
                 </div>
 
                 <div class="form-field">
-                  <label>Valor unitÃ¡rio</label>
+                  <label>Valor unitário</label>
                   <input type="number" class="compraItemValorUnitario" min="0" step="0.01" placeholder="0,00">
                 </div>
 
@@ -331,7 +331,7 @@
             </div>
 
             <div class="form-field">
-              <label for="compraCompetencia">CompetÃªncia do CMV</label>
+              <label for="compraCompetencia">Competência do CMV</label>
               <input type="month" id="compraCompetencia">
             </div>
           </div>
@@ -366,12 +366,12 @@
         </div>
 
         <div class="form-section">
-          <h3 class="form-section-title">InformaÃ§Ãµes adicionais</h3>
+          <h3 class="form-section-title">Informações adicionais</h3>
 
           <div class="form-grid">
             <div class="form-field full">
-              <label for="compraObservacoes">ObservaÃ§Ãµes internas</label>
-              <textarea id="compraObservacoes" placeholder="Ex: compra emergencial, conferÃªncia pendente, fornecedor alternativo..."></textarea>
+              <label for="compraObservacoes">Observações internas</label>
+              <textarea id="compraObservacoes" placeholder="Ex: compra emergencial, conferência pendente, fornecedor alternativo..."></textarea>
             </div>
           </div>
         </div>
@@ -400,4 +400,5 @@
   <script src="../js/compras-realizadas.js"></script>
 </body>
 </html>
+
 

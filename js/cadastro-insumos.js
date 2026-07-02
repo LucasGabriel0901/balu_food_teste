@@ -1,4 +1,4 @@
-// =====================================================
+﻿// =====================================================
 // BALU FOOD - CADASTRO DE INSUMOS
 // Versão refeita para funcionar 100% no front-end
 // CRUD + cálculos + localStorage + CSV + prévia editável
@@ -552,15 +552,13 @@ if (perdaPercentual < 0) {
 
 var valorEstoque = 0;
 
-if (unidadeConsumo === "unidade") {
-if (custoUnitario > 0) {
-valorEstoque = estoqueAtual * custoUnitario;
-} else {
-valorEstoque = estoqueAtual * precoMedio;
-}
-} else {
-valorEstoque = (estoqueAtual / 1000) * precoMedioKg;
-}
+valorEstoque = calcularValorEstoqueInsumoQuantidade(
+estoqueAtual,
+unidadeConsumo,
+precoMedioKg,
+custoUnitario,
+precoMedio
+);
 
 var statusEstoque = "Estoque ok";
 
@@ -595,6 +593,24 @@ perdaPercentual: perdaPercentual,
 valorEstoque: valorEstoque,
 statusEstoque: statusEstoque
 };
+}
+
+function calcularValorEstoqueInsumoQuantidade(quantidade, unidade, precoMedioKg, custoUnitario, precoMedio) {
+var quantidadeNumero = numeroInsumo(quantidade);
+var unidadeNormalizada = normalizarUnidadeInsumo(unidade);
+var precoKg = numeroInsumo(precoMedioKg);
+var custoUnit = numeroInsumo(custoUnitario);
+var precoMedioNumero = numeroInsumo(precoMedio);
+
+if (unidadeNormalizada === "g" && precoKg > 0) {
+return (quantidadeNumero / 1000) * precoKg;
+}
+
+if (unidadeNormalizada === "kg" && precoKg > 0) {
+return quantidadeNumero * precoKg;
+}
+
+return quantidadeNumero * (custoUnit || precoMedioNumero || precoKg);
 }
 
 function renderizarInsumos() {
@@ -2104,7 +2120,7 @@ drawer.innerHTML =
 "<h2>Alerta de estoque baixo</h2>" +
 "<p>Itens que estão em atenção, críticos ou abaixo do estoque ideal.</p>" +
 "</div>" +
-"<button type='button' class='drawer-close' onclick='closeDrawer()'>×</button>" +
+"<button type='button' class='drawer-close' onclick='closeDrawer()'>Ã—</button>" +
 "</div>" +
 "<div class='drawer-body'>" +
 "<div id='alertaEstoqueInsumosConteudo'>" +
@@ -3043,4 +3059,5 @@ setTimeout(function () {
 baluIniciarFixCardEstoqueBaixo();
 }, 1000);
 })();
+
 

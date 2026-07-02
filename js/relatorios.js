@@ -1,4 +1,4 @@
-// ==============================
+﻿// ==============================
 // BALU FOOD - RELATÓRIOS
 // Resumo operacional, estoque, compras, CMV e fichas técnicas
 // ==============================
@@ -51,6 +51,7 @@ renderVisaoGeralRelatorios(resumo);
 renderIndicadoresRelatorios(resumo);
 renderAtencoesRelatorios(resumo);
 renderComprasRelatorios(resumo.comprasFiltradas);
+renderVendasProducaoRelatorios(resumo.vendasProducaoFiltradas);
 renderEstoqueRelatorios(resumo.itensEstoqueAtencao);
 renderFichasAtencaoRelatorios(resumo.fichasAtencao);
 
@@ -87,6 +88,12 @@ compras: carregarListaRelatorio([
   "compras"
 ]),
 
+vendasProducao: carregarListaRelatorio([
+  "balu_vendas_producao",
+  "balu_vendas_manuais",
+  "vendasProducao"
+]),
+
 inventarios: carregarListaRelatorio([
   "balu_inventarios",
   "inventarios"
@@ -117,8 +124,24 @@ var comprasFiltradas = filtrarListaPorPeriodoRelatorio(dados.compras, periodo, f
 return compra.data || compra.dataCompra || compra.competencia || compra.criadoEm || compra.createdAt;
 });
 
+var vendasProducaoFiltradas = filtrarListaPorPeriodoRelatorio(dados.vendasProducao, periodo, function (registro) {
+return registro.data || registro.dataVenda || registro.competencia || registro.criadoEm || registro.createdAt;
+});
+
 var totalCompras = somarListaRelatorio(comprasFiltradas, function (compra) {
 return obterTotalCompraRelatorio(compra);
+});
+
+var vendasProducaoConfirmadas = vendasProducaoFiltradas.filter(function (registro) {
+return String(registro.status || "").toLowerCase() === "confirmada";
+});
+
+var quantidadeVendasProducao = somarListaRelatorio(vendasProducaoConfirmadas, function (registro) {
+return registro.quantidade || registro.qtd || 0;
+});
+
+var custoVendasProducao = somarListaRelatorio(vendasProducaoConfirmadas, function (registro) {
+return registro.custoEstoqueBaixado || registro.custoEstimado || registro.custoTotal || 0;
 });
 
 var comprasPendentes = comprasFiltradas.filter(function (compra) {
@@ -216,6 +239,8 @@ embalagens: dados.embalagens,
 funcionarios: dados.funcionarios,
 compras: dados.compras,
 comprasFiltradas: comprasFiltradas,
+vendasProducao: dados.vendasProducao,
+vendasProducaoFiltradas: vendasProducaoFiltradas,
 inventarios: dados.inventarios,
 cmv: dados.cmv,
 fichas: dados.fichas,
@@ -223,6 +248,11 @@ fichas: dados.fichas,
 totalCompras: totalCompras,
 qtdCompras: comprasFiltradas.length,
 comprasPendentes: comprasPendentes,
+
+totalVendasProducao: vendasProducaoFiltradas.length,
+vendasProducaoConfirmadas: vendasProducaoConfirmadas.length,
+quantidadeVendasProducao: quantidadeVendasProducao,
+custoVendasProducao: custoVendasProducao,
 
 totalInsumos: dados.insumos.length,
 valorInsumos: resumoInsumos.valorEstoque,
@@ -306,6 +336,14 @@ setTextRelatorio("relatorioUltimoInventario", "Nenhum inventário encontrado.");
 
 setTextRelatorio("relatorioTotalFichas", resumo.totalFichas);
 setTextRelatorio("relatorioFichasMedia", "Custo médio " + moedaRelatorio(resumo.custoMedioFicha) + ".");
+
+setTextRelatorio("relatorioTotalVendasProducao", resumo.totalVendasProducao);
+setTextRelatorio(
+"relatorioVendasProducaoResumo",
+resumo.vendasProducaoConfirmadas + " confirmada(s), " +
+numeroFormatoRelatorio(resumo.quantidadeVendasProducao) + " unidade(s), " +
+moedaRelatorio(resumo.custoVendasProducao) + "."
+);
 
 setTextRelatorio("relatorioSaudeOperacional", resumo.saudeOperacional);
 }
@@ -423,6 +461,40 @@ return (
 "<td>" + textoSeguroRelatorio(compra.categoria || compra.tipo || compra.tipoCompra || "-") + "</td>" +
 "<td>" + badgeStatusRelatorio(compra.status || compra.situacao || "Sem status") + "</td>" +
 "<td><strong>" + moedaRelatorio(obterTotalCompraRelatorio(compra)) + "</strong></td>" +
+"</tr>"
+);
+}).join("");
+}
+
+function renderVendasProducaoRelatorios(registros) {
+var table = document.getElementById("relatorioVendasProducaoTable");
+
+if (!table) {
+return;
+}
+
+if (!registros.length) {
+table.innerHTML =
+"<tr>" +
+"<td colspan='6' class='text-muted'>Nenhuma venda ou produção encontrada.</td>" +
+"</tr>";
+return;
+}
+
+var registrosOrdenados = registros.slice().sort(function (a, b) {
+return dataTimestampRelatorio(b.data || b.dataVenda || b.competencia || b.criadoEm || b.createdAt) -
+dataTimestampRelatorio(a.data || a.dataVenda || a.competencia || a.criadoEm || a.createdAt);
+}).slice(0, 10);
+
+table.innerHTML = registrosOrdenados.map(function (registro) {
+return (
+"<tr>" +
+"<td>" + textoSeguroRelatorio(formatarDataTextoRelatorio(registro.data || registro.dataVenda || registro.competencia || registro.criadoEm || registro.createdAt)) + "</td>" +
+"<td><strong>" + textoSeguroRelatorio(registro.fichaNome || registro.produto || registro.nomeProduto || "-") + "</strong></td>" +
+"<td>" + numeroFormatoRelatorio(registro.quantidade || registro.qtd || 0) + "</td>" +
+"<td>" + textoSeguroRelatorio(registro.canal || "-") + "</td>" +
+"<td>" + badgeStatusRelatorio(registro.status || "Sem status") + "</td>" +
+"<td><strong>" + moedaRelatorio(registro.custoEstoqueBaixado || registro.custoEstimado || registro.custoTotal || 0) + "</strong></td>" +
 "</tr>"
 );
 }).join("");
@@ -723,6 +795,10 @@ linhas.push("Embalagens cadastradas;" + resumo.totalEmbalagens);
 linhas.push("Funcionarios;" + resumo.totalFuncionarios);
 linhas.push("Inventarios;" + resumo.totalInventarios);
 linhas.push("Fichas tecnicas;" + resumo.totalFichas);
+linhas.push("Vendas/Producao;" + resumo.totalVendasProducao);
+linhas.push("Vendas/Producao confirmadas;" + resumo.vendasProducaoConfirmadas);
+linhas.push("Quantidade vendas/producao;" + numeroExportRelatorio(resumo.quantidadeVendasProducao));
+linhas.push("Custo vendas/producao;" + numeroExportRelatorio(resumo.custoVendasProducao));
 linhas.push("Saude operacional;" + resumo.saudeOperacional);
 
 var blob = new Blob([linhas.join("\n")], {
@@ -1046,3 +1122,4 @@ if (window.lucide) {
 lucide.createIcons();
 }
 }
+

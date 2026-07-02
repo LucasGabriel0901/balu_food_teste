@@ -1,4 +1,4 @@
-// =====================================================
+﻿// =====================================================
 // BALU FOOD - BANNERS.JS
 // Sistema global de propaganda / carrossel automático
 // Banner fino estilo marketplace
@@ -373,3 +373,5 @@
     paginaAtual: baluObterPaginaAtual
   };
 })();
+
+

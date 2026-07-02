@@ -29,11 +29,11 @@
       <section class="page">
 
 
-    <!-- CabeÃ§alho da pÃ¡gina -->
+    <!-- Cabeçalho da página -->
     <div class="page-header">
       <div>
         <h1>CMV Real Mensal</h1>
-        <p>Feche o custo real da operaÃ§Ã£o usando inventÃ¡rio inicial, compras e inventÃ¡rio final.</p>
+        <p>Feche o custo real da operação usando inventário inicial, compras e inventário final.</p>
       </div>
 
       <div class="page-actions">
@@ -52,7 +52,7 @@
     <!-- Cards superiores -->
     <div class="kpi-grid">
       <div class="kpi-card green">
-        <span>Faturamento do mÃªs</span>
+        <span>Faturamento do mês</span>
         <strong id="cmvFaturamentoMes">R$ 0,00</strong>
         <small>Base para calcular o percentual do CMV.</small>
       </div>
@@ -71,26 +71,26 @@
 
       <div class="kpi-card red">
         <span>Status do CMV</span>
-        <strong id="cmvStatusMes">NÃ£o calculado</strong>
-        <small>ClassificaÃ§Ã£o automÃ¡tica do resultado.</small>
+        <strong id="cmvStatusMes">Não calculado</strong>
+        <small>Classificação automática do resultado.</small>
       </div>
     </div>
 
     <!-- Resultado principal -->
     <div class="cmv-result-box">
-      <span>Resultado do Ãºltimo fechamento</span>
+      <span>Resultado do último fechamento</span>
       <strong id="cmvResultadoPrincipal">R$ 0,00</strong>
       <small id="cmvResultadoDescricao">
         Nenhum fechamento mensal foi salvo ainda.
       </small>
     </div>
 
-    <!-- FÃ³rmula do CMV -->
+    <!-- Fórmula do CMV -->
     <div class="finance-panel">
       <div class="finance-panel-header">
         <div>
-          <h2>FÃ³rmula do CMV Real</h2>
-          <p>O CMV mostra quanto foi consumido de insumos e embalagens para gerar o faturamento do mÃªs.</p>
+          <h2>Fórmula do CMV Real</h2>
+          <p>O CMV mostra quanto foi consumido de insumos e embalagens para gerar o faturamento do mês.</p>
         </div>
 
         <span id="cmvClassificacaoBadge" class="badge purple">Aguardando dados</span>
@@ -105,7 +105,7 @@
         <div class="calc-flow-symbol">+</div>
 
         <div class="calc-flow-card">
-          <span>Compras do MÃªs</span>
+          <span>Compras do Mês</span>
           <strong id="cmvResumoCompras">R$ 0,00</strong>
         </div>
 
@@ -145,37 +145,37 @@
       </div>
     </div>
 
-    <!-- ClassificaÃ§Ã£o -->
+    <!-- Classificação -->
     <div class="finance-panel">
       <div class="finance-panel-header">
         <div>
           <h2>Leitura do resultado</h2>
-          <p>Essa rÃ©gua ajuda o cliente a entender se o custo estÃ¡ saudÃ¡vel ou precisa de atenÃ§Ã£o.</p>
+          <p>Essa régua ajuda o cliente a entender se o custo está saudável ou precisa de atenção.</p>
         </div>
       </div>
 
       <div class="cmv-classification-grid">
         <div class="cmv-classification-card excellent">
-          <strong>AtÃ© 25%</strong>
+          <strong>Até 25%</strong>
           <span>Excelente</span>
-          <small>OperaÃ§Ã£o com bom controle de custo.</small>
+          <small>Operação com bom controle de custo.</small>
         </div>
 
         <div class="cmv-classification-card expected">
           <strong>26% a 35%</strong>
           <span>Dentro do esperado</span>
-          <small>Resultado comum para muitas operaÃ§Ãµes.</small>
+          <small>Resultado comum para muitas operações.</small>
         </div>
 
         <div class="cmv-classification-card warning">
           <strong>36% a 45%</strong>
-          <span>AtenÃ§Ã£o</span>
-          <small>Revisar compras, perdas e precificaÃ§Ã£o.</small>
+          <span>Atenção</span>
+          <small>Revisar compras, perdas e precificação.</small>
         </div>
 
         <div class="cmv-classification-card critical">
           <strong>Acima de 45%</strong>
-          <span>CrÃ­tico</span>
+          <span>Crítico</span>
           <small>Custo alto comprometendo a margem.</small>
         </div>
       </div>
@@ -189,7 +189,7 @@
             type="search"
             id="searchCmv"
             class="cadastro-search"
-            placeholder="Buscar por competÃªncia, responsÃ¡vel ou observaÃ§Ã£o..."
+            placeholder="Buscar por competência, responsável ou observação..."
           >
         </div>
 
@@ -198,16 +198,16 @@
             <option value="">Todos os status</option>
             <option value="Aberto">Aberto</option>
             <option value="Fechado">Fechado</option>
-            <option value="RevisÃ£o">RevisÃ£o</option>
+            <option value="Revisão">Revisão</option>
             <option value="Cancelado">Cancelado</option>
           </select>
 
           <select id="filterClassificacaoCmv" class="cadastro-filter">
-            <option value="">Todas as classificaÃ§Ãµes</option>
+            <option value="">Todas as classificações</option>
             <option value="Excelente">Excelente</option>
             <option value="Dentro do esperado">Dentro do esperado</option>
-            <option value="AtenÃ§Ã£o">AtenÃ§Ã£o</option>
-            <option value="CrÃ­tico">CrÃ­tico</option>
+            <option value="Atenção">Atenção</option>
+            <option value="Crítico">Crítico</option>
           </select>
         </div>
       </div>
@@ -215,16 +215,16 @@
       <table class="data-table">
         <thead>
           <tr>
-            <th>CompetÃªncia</th>
+            <th>Competência</th>
             <th>Faturamento</th>
             <th>Estoque Inicial</th>
             <th>Compras</th>
             <th>Estoque Final</th>
             <th>CMV Real</th>
             <th>CMV %</th>
-            <th>ClassificaÃ§Ã£o</th>
+            <th>Classificação</th>
             <th>Status</th>
-            <th>AÃ§Ãµes</th>
+            <th>Ações</th>
           </tr>
         </thead>
 
@@ -244,7 +244,7 @@
 
   </div>
 
-  <!-- Drawer de cadastro/ediÃ§Ã£o do CMV -->
+  <!-- Drawer de cadastro/edição do CMV -->
 
   <aside class="drawer" id="drawerCmv">
     <div class="drawer-header">
@@ -267,7 +267,7 @@
 
       <div class="form-grid">
         <div class="form-field">
-          <label for="cmvCompetencia">CompetÃªncia *</label>
+          <label for="cmvCompetencia">Competência *</label>
           <input type="month" id="cmvCompetencia" required>
         </div>
 
@@ -277,7 +277,7 @@
         </div>
 
         <div class="form-field">
-          <label for="cmvResponsavel">ResponsÃ¡vel *</label>
+          <label for="cmvResponsavel">Responsável *</label>
           <input type="text" id="cmvResponsavel" placeholder="Ex: Lucas Gabriel" required>
         </div>
 
@@ -286,7 +286,7 @@
           <select id="cmvStatus" required>
             <option value="Aberto">Aberto</option>
             <option value="Fechado">Fechado</option>
-            <option value="RevisÃ£o">RevisÃ£o</option>
+            <option value="Revisão">Revisão</option>
             <option value="Cancelado">Cancelado</option>
           </select>
         </div>
@@ -299,7 +299,7 @@
 
       <div class="form-grid">
         <div class="form-field">
-          <label for="cmvFaturamento">Faturamento do mÃªs *</label>
+          <label for="cmvFaturamento">Faturamento do mês *</label>
           <input type="number" id="cmvFaturamento" min="0" step="0.01" placeholder="Ex: 60000" required>
         </div>
 
@@ -337,14 +337,14 @@
 
         <div class="form-field full">
           <label for="cmvMotivoAjuste">Motivo dos ajustes</label>
-          <textarea id="cmvMotivoAjuste" placeholder="Ex: perdas por vencimento, quebra, degustaÃ§Ã£o, evento interno..."></textarea>
+          <textarea id="cmvMotivoAjuste" placeholder="Ex: perdas por vencimento, quebra, degustação, evento interno..."></textarea>
         </div>
       </div>
     </div>
 
-    <!-- Resultado automÃ¡tico -->
+    <!-- Resultado automático -->
     <div class="form-section">
-      <h3 class="form-section-title">Resultado automÃ¡tico</h3>
+      <h3 class="form-section-title">Resultado automático</h3>
 
       <div class="calculated-box">
         <div class="calculated-grid">
@@ -369,8 +369,8 @@
           </div>
 
           <div class="calculated-item">
-            <span>ClassificaÃ§Ã£o</span>
-            <strong id="cmvClassificacaoPreview">NÃ£o calculado</strong>
+            <span>Classificação</span>
+            <strong id="cmvClassificacaoPreview">Não calculado</strong>
           </div>
 
           <div class="calculated-item">
@@ -381,14 +381,14 @@
       </div>
     </div>
 
-    <!-- ObservaÃ§Ãµes -->
+    <!-- Observações -->
     <div class="form-section">
-      <h3 class="form-section-title">InformaÃ§Ãµes adicionais</h3>
+      <h3 class="form-section-title">Informações adicionais</h3>
 
       <div class="form-grid">
         <div class="form-field full">
-          <label for="cmvObservacoes">ObservaÃ§Ãµes internas</label>
-          <textarea id="cmvObservacoes" placeholder="Ex: mÃªs com evento grande, compras atÃ­picas, perdas, divergÃªncias de estoque..."></textarea>
+          <label for="cmvObservacoes">Observações internas</label>
+          <textarea id="cmvObservacoes" placeholder="Ex: mês com evento grande, compras atípicas, perdas, divergências de estoque..."></textarea>
         </div>
       </div>
     </div>
@@ -409,7 +409,7 @@
 
   </aside>
 
-  <!-- Ãcones -->
+  <!-- Ícones -->
 <script src="https://unpkg.com/lucide@latest"></script>
 
 <script src="../js/app.js"></script>
@@ -425,4 +425,5 @@
   <script src="../js/cmv-real-mensal.js"></script>
 </body>
 </html>
+
 

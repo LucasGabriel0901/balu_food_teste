@@ -1,4 +1,4 @@
-// ========================================
+﻿// ========================================
 // BALU FOOD - SESSION
 // Funções globais da sessão do usuário logado
 // ========================================
@@ -119,3 +119,4 @@ localStorage.removeItem(BALU_SESSION_KEY);
 window.location.href = "login.html";
 }
 }
+

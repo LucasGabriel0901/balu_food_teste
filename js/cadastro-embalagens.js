@@ -1,4 +1,4 @@
-// =====================================================
+﻿// =====================================================
 // BALU FOOD - CADASTRO DE EMBALAGENS
 // Versão limpa: embalagens + kits + localStorage + CSV
 // =====================================================
@@ -2003,3 +2003,5 @@ function parseCsvEmbalagem(texto) {
     });
   });
 }
+
+

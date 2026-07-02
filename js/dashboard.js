@@ -1,4 +1,4 @@
-// ==============================
+﻿// ==============================
 // BALU FOOD - DASHBOARD
 // Resumo geral da operação
 // Puxa dados de insumos, embalagens, compras, inventários e CMV
@@ -35,6 +35,7 @@ var inventarios = carregarListaDashboard("inventarios", ["balu_inventarios"]);
 var fechamentosCmv = carregarListaDashboard("cmv", ["balu_cmv_mensal", "balu_cmv"]);
 var funcionarios = carregarListaDashboard("funcionarios", ["balu_funcionarios"]);
 var fichasTecnicas = carregarListaDashboard("fichasTecnicas", ["balu_fichas_tecnicas", "balu_fichas_tecnicas_v2"]);
+var vendasProducao = carregarListaDashboard("vendasProducao", ["balu_vendas_producao", "balu_vendas_manuais"]);
 
 var competenciaAtual = getCurrentCompetencia();
 
@@ -50,6 +51,11 @@ return getCompraStatus(compra) === "Confirmada";
 
 var comprasDoMes = comprasConfirmadas.filter(function (compra) {
 return compraPertenceCompetencia(compra, competenciaAtual);
+});
+
+var vendasProducaoDoMes = vendasProducao.filter(function (registro) {
+return getVendaProducaoStatusDashboard(registro) === "Confirmada" &&
+vendaProducaoPertenceCompetenciaDashboard(registro, competenciaAtual);
 });
 
 var totalCompras = comprasDoMes.reduce(function (total, compra) {
@@ -88,10 +94,11 @@ setTextDashboard("cmvMeterPercent", formatarNumeroDashboard(cmvPercentual, 0) + 
 
 updateCmvStatus(classificacao);
 renderResumoEstoqueDashboard(resumoInsumos, resumoEmbalagens, valorEstoqueGeral, alertasEstoque);
+renderVendasProducaoDashboard(vendasProducaoDoMes, competenciaAtual);
 renderComprasTable(compras);
 renderChartPlaceholder(fechamentosCmv);
 renderAtencoesDashboard(resumoInsumos, resumoEmbalagens, alertasEstoque, valorEstoqueGeral, funcionarios, fichasTecnicas);
-renderSaudeOperacaoDashboard(insumos, embalagens, comprasDoMes, inventarios, fechamentosCmv, funcionarios, fichasTecnicas);
+renderSaudeOperacaoDashboard(insumos, embalagens, comprasDoMes, inventarios, fechamentosCmv, funcionarios, fichasTecnicas, vendasProducaoDoMes);
 
 if (window.lucide) {
 lucide.createIcons();
@@ -287,6 +294,63 @@ resumo.innerHTML =
 
 }
 
+function renderVendasProducaoDashboard(vendasProducaoDoMes, competenciaAtual) {
+var referencia = document.getElementById("dashboardResumoEstoque") || document.querySelector(".kpi-grid");
+
+if (!referencia || !referencia.parentNode) {
+return;
+}
+
+var painel = document.getElementById("dashboardResumoVendasProducao");
+
+if (!painel) {
+painel = document.createElement("div");
+painel.id = "dashboardResumoVendasProducao";
+painel.className = "kpi-grid";
+painel.style.marginTop = "18px";
+referencia.parentNode.insertBefore(painel, referencia.nextSibling);
+}
+
+var quantidadeTotal = vendasProducaoDoMes.reduce(function (total, registro) {
+return total + getVendaProducaoQuantidadeDashboard(registro);
+}, 0);
+
+var custoTotal = vendasProducaoDoMes.reduce(function (total, registro) {
+return total + getVendaProducaoCustoDashboard(registro);
+}, 0);
+
+var ultimo = vendasProducaoDoMes.slice().sort(function (a, b) {
+return dataTimestampDashboard(getVendaProducaoDataDashboard(b)) - dataTimestampDashboard(getVendaProducaoDataDashboard(a));
+})[0];
+
+var produtoMaisRecente = ultimo ? getVendaProducaoProdutoDashboard(ultimo) : "Nenhum registro";
+
+painel.innerHTML =
+"<div class='kpi-card green'>" +
+"<span>Vendas/Produções</span>" +
+"<strong>" + vendasProducaoDoMes.length + "</strong>" +
+"<small>Confirmadas em " + escaparHtmlDashboard(competenciaAtual) + ".</small>" +
+"</div>" +
+
+"<div class='kpi-card purple'>" +
+"<span>Quantidade movimentada</span>" +
+"<strong>" + formatarNumeroDashboard(quantidadeTotal, 2) + "</strong>" +
+"<small>Total vendido ou produzido no mês.</small>" +
+"</div>" +
+
+"<div class='kpi-card orange'>" +
+"<span>Custo estimado baixado</span>" +
+"<strong>" + formatarMoedaDashboard(custoTotal) + "</strong>" +
+"<small>Baseado nas fichas técnicas confirmadas.</small>" +
+"</div>" +
+
+"<div class='kpi-card red'>" +
+"<span>Último produto</span>" +
+"<strong>" + escaparHtmlDashboard(produtoMaisRecente) + "</strong>" +
+"<small>Registro mais recente do período.</small>" +
+"</div>";
+}
+
 function renderAtencoesDashboard(resumoInsumos, resumoEmbalagens, alertasEstoque, valorEstoqueGeral, funcionarios, fichasTecnicas) {
 var lista = document.querySelector(".attention-list");
 
@@ -316,7 +380,7 @@ lista.innerHTML =
   "</div>" +
   "<div class='attention-content'>" +
     "<strong>Cadastros operacionais</strong>" +
-    "<span>" + resumoInsumos.total + " insumo(s), " + resumoEmbalagens.total + " embalagem(ns), " + funcionarios.length + " funcionÃ¡rio(s) e " + fichasTecnicas.length + " ficha(s).</span>" +
+    "<span>" + resumoInsumos.total + " insumo(s), " + resumoEmbalagens.total + " embalagem(ns), " + funcionarios.length + " funcionário(s) e " + fichasTecnicas.length + " ficha(s).</span>" +
   "</div>" +
 "</div>" +
 
@@ -333,7 +397,7 @@ lista.innerHTML =
 
 }
 
-function renderSaudeOperacaoDashboard(insumos, embalagens, comprasDoMes, inventarios, fechamentosCmv, funcionarios, fichasTecnicas) {
+function renderSaudeOperacaoDashboard(insumos, embalagens, comprasDoMes, inventarios, fechamentosCmv, funcionarios, fichasTecnicas, vendasProducaoDoMes) {
 var linhas = document.querySelectorAll(".operation-health .health-row");
 
 if (!linhas || linhas.length < 3) {
@@ -342,11 +406,11 @@ return;
 
 var totalCadastros = insumos.length + embalagens.length + funcionarios.length + fichasTecnicas.length;
 var percentualCadastros = totalCadastros > 0 ? 100 : 0;
-var percentualCompras = comprasDoMes.length > 0 ? 100 : 0;
+var percentualMovimento = comprasDoMes.length > 0 || vendasProducaoDoMes.length > 0 ? 100 : 0;
 var percentualCmv = fechamentosCmv.length > 0 ? 100 : inventarios.length > 0 ? 50 : 0;
 
 atualizarLinhaSaude(linhas[0], "Cadastros preenchidos", percentualCadastros);
-atualizarLinhaSaude(linhas[1], "Compras registradas", percentualCompras);
+atualizarLinhaSaude(linhas[1], "Compras e vendas registradas", percentualMovimento);
 atualizarLinhaSaude(linhas[2], "Fechamento CMV", percentualCmv);
 }
 
@@ -448,6 +512,73 @@ return true;
 }
 
 return false;
+}
+
+function getVendaProducaoStatusDashboard(registro) {
+return limparTextoDashboard(
+registro.status ||
+registro.situacao,
+"Pendente"
+);
+}
+
+function getVendaProducaoDataDashboard(registro) {
+return registro.data || registro.dataVenda || registro.competencia || registro.criadoEm || "";
+}
+
+function getVendaProducaoProdutoDashboard(registro) {
+return limparTextoDashboard(
+registro.fichaNome ||
+registro.produto ||
+registro.nomeProduto ||
+registro.nome,
+"Produto não informado"
+);
+}
+
+function getVendaProducaoQuantidadeDashboard(registro) {
+return numeroDashboard(registro.quantidade || registro.qtd || registro.totalQuantidade || 0);
+}
+
+function getVendaProducaoCustoDashboard(registro) {
+return numeroDashboard(
+registro.custoEstoqueBaixado ||
+registro.custoEstimado ||
+registro.custoTotal ||
+registro.valorCusto ||
+0
+);
+}
+
+function vendaProducaoPertenceCompetenciaDashboard(registro, competencia) {
+var competenciaRegistro = limparTextoDashboard(registro.competencia || "", "");
+
+if (competenciaRegistro) {
+return competenciaRegistro === competencia;
+}
+
+var data = getVendaProducaoDataDashboard(registro);
+
+if (!data) {
+return true;
+}
+
+return String(data).substring(0, 7) === competencia;
+}
+
+function dataTimestampDashboard(valor) {
+if (!valor) {
+return 0;
+}
+
+var texto = String(valor);
+
+if (/^\d{4}-\d{2}$/.test(texto)) {
+texto = texto + "-01";
+}
+
+var data = new Date(texto);
+return isNaN(data.getTime()) ? 0 : data.getTime();
 }
 
 function getInventarioTotalByTipo(inventarios, tipo, competencia) {
@@ -778,3 +909,4 @@ return "";
 
 return String(valor);
 }
+
