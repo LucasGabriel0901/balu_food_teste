@@ -30,9 +30,11 @@ renderDashboardData();
 function renderDashboardData() {
 var insumos = carregarListaDashboard("insumos", ["balu_insumos"]);
 var embalagens = carregarListaDashboard("embalagens", ["balu_embalagens"]);
-var compras = carregarListaDashboard("compras", ["balu_compras"]);
+var compras = carregarListaDashboard("compras", ["balu_compras_realizadas", "balu_compras"]);
 var inventarios = carregarListaDashboard("inventarios", ["balu_inventarios"]);
-var fechamentosCmv = carregarListaDashboard("cmv", ["balu_cmv"]);
+var fechamentosCmv = carregarListaDashboard("cmv", ["balu_cmv_mensal", "balu_cmv"]);
+var funcionarios = carregarListaDashboard("funcionarios", ["balu_funcionarios"]);
+var fichasTecnicas = carregarListaDashboard("fichasTecnicas", ["balu_fichas_tecnicas", "balu_fichas_tecnicas_v2"]);
 
 var competenciaAtual = getCurrentCompetencia();
 
@@ -88,8 +90,8 @@ updateCmvStatus(classificacao);
 renderResumoEstoqueDashboard(resumoInsumos, resumoEmbalagens, valorEstoqueGeral, alertasEstoque);
 renderComprasTable(compras);
 renderChartPlaceholder(fechamentosCmv);
-renderAtencoesDashboard(resumoInsumos, resumoEmbalagens, alertasEstoque, valorEstoqueGeral);
-renderSaudeOperacaoDashboard(insumos, embalagens, comprasDoMes, inventarios, fechamentosCmv);
+renderAtencoesDashboard(resumoInsumos, resumoEmbalagens, alertasEstoque, valorEstoqueGeral, funcionarios, fichasTecnicas);
+renderSaudeOperacaoDashboard(insumos, embalagens, comprasDoMes, inventarios, fechamentosCmv, funcionarios, fichasTecnicas);
 
 if (window.lucide) {
 lucide.createIcons();
@@ -285,7 +287,7 @@ resumo.innerHTML =
 
 }
 
-function renderAtencoesDashboard(resumoInsumos, resumoEmbalagens, alertasEstoque, valorEstoqueGeral) {
+function renderAtencoesDashboard(resumoInsumos, resumoEmbalagens, alertasEstoque, valorEstoqueGeral, funcionarios, fichasTecnicas) {
 var lista = document.querySelector(".attention-list");
 
 if (!lista) {
@@ -314,7 +316,7 @@ lista.innerHTML =
   "</div>" +
   "<div class='attention-content'>" +
     "<strong>Cadastros operacionais</strong>" +
-    "<span>" + resumoInsumos.total + " insumo(s) e " + resumoEmbalagens.total + " embalagem(ns) cadastrados.</span>" +
+    "<span>" + resumoInsumos.total + " insumo(s), " + resumoEmbalagens.total + " embalagem(ns), " + funcionarios.length + " funcionÃ¡rio(s) e " + fichasTecnicas.length + " ficha(s).</span>" +
   "</div>" +
 "</div>" +
 
@@ -331,14 +333,14 @@ lista.innerHTML =
 
 }
 
-function renderSaudeOperacaoDashboard(insumos, embalagens, comprasDoMes, inventarios, fechamentosCmv) {
+function renderSaudeOperacaoDashboard(insumos, embalagens, comprasDoMes, inventarios, fechamentosCmv, funcionarios, fichasTecnicas) {
 var linhas = document.querySelectorAll(".operation-health .health-row");
 
 if (!linhas || linhas.length < 3) {
 return;
 }
 
-var totalCadastros = insumos.length + embalagens.length;
+var totalCadastros = insumos.length + embalagens.length + funcionarios.length + fichasTecnicas.length;
 var percentualCadastros = totalCadastros > 0 ? 100 : 0;
 var percentualCompras = comprasDoMes.length > 0 ? 100 : 0;
 var percentualCmv = fechamentosCmv.length > 0 ? 100 : inventarios.length > 0 ? 50 : 0;
@@ -666,7 +668,7 @@ var texto = String(valor)
 .trim();
 
 if (texto.indexOf(",") >= 0) {
-texto = texto.replace(/./g, "").replace(",", ".");
+texto = texto.replace(/\./g, "").replace(",", ".");
 }
 
 var numero = Number(texto);

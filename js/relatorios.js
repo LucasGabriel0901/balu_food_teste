@@ -82,6 +82,7 @@ funcionarios: carregarListaRelatorio([
 ]),
 
 compras: carregarListaRelatorio([
+  "balu_compras_realizadas",
   "balu_compras",
   "compras"
 ]),
@@ -92,15 +93,15 @@ inventarios: carregarListaRelatorio([
 ]),
 
 cmv: carregarListaRelatorio([
+  "balu_cmv_mensal",
   "balu_cmv",
   "cmv",
-  "balu_cmv_mensal",
   "cmv_mensal"
 ]),
 
 fichas: carregarListaRelatorio([
-  "balu_fichas_tecnicas_v2",
   "balu_fichas_tecnicas",
+  "balu_fichas_tecnicas_v2",
   "fichas_tecnicas"
 ])
 
@@ -746,6 +747,14 @@ var chave = chaves[i];
 
 
 try {
+  if (typeof loadData === "function") {
+    var dadosLoad = loadData(chave, []);
+
+    if (Array.isArray(dadosLoad) && dadosLoad.length > 0) {
+      return dadosLoad;
+    }
+  }
+
   var dados = localStorage.getItem(chave);
 
   if (!dados) {
@@ -844,7 +853,7 @@ var texto = String(valor)
 .trim();
 
 if (texto.indexOf(",") >= 0) {
-texto = texto.replace(/./g, "").replace(",", ".");
+texto = texto.replace(/\./g, "").replace(",", ".");
 }
 
 var numero = Number(texto);

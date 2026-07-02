@@ -11,12 +11,26 @@ const BALU_KEYS = {
 clientLogo: "balu_client_logo",
 insumos: "balu_insumos",
 embalagens: "balu_embalagens",
+kitsEmbalagens: "balu_kits_embalagens",
 funcionarios: "balu_funcionarios",
 compras: "balu_compras_realizadas",
 inventarios: "balu_inventarios",
 cmv: "balu_cmv_mensal",
-faturamentoMensal: "balu_faturamento_mensal"
+fichasTecnicas: "balu_fichas_tecnicas",
+fichas_tecnicas: "balu_fichas_tecnicas",
+faturamentoMensal: "balu_faturamento_mensal",
+banners: "balu_publicidade_banners",
+configuracoes: "balu_configuracoes_empresa"
 };
+
+const BALU_KEY_ALIASES = {
+compras: ["balu_compras"],
+cmv: ["balu_cmv"],
+fichasTecnicas: ["balu_fichas_tecnicas_v2", "balu_fichas_tecnicas"]
+};
+
+window.BALU_KEYS = BALU_KEYS;
+window.BALU_KEY_ALIASES = BALU_KEY_ALIASES;
 
 // ==============================
 // Números e formatação BR
@@ -27,13 +41,30 @@ if (typeof value === "number") {
 return Number.isFinite(value) ? value : 0;
 }
 
-const cleanValue = String(value ?? "")
+let cleanValue = String(value ?? "")
 .trim()
 .replace(/\s/g, "")
 .replace("R$", "")
 .replace("%", "")
-.replace(/./g, "")
-.replace(",", ".");
+.replace("x", "");
+
+if (!cleanValue) {
+return 0;
+}
+
+if (cleanValue.indexOf(",") >= 0) {
+cleanValue = cleanValue.replace(/\./g, "").replace(",", ".");
+} else {
+const partes = cleanValue.split(".");
+
+if (partes.length > 2) {
+  cleanValue = partes.join("");
+} else if (partes.length === 2 && partes[1].length === 3 && partes[0].length <= 3) {
+  cleanValue = cleanValue.replace(/\./g, "");
+}
+}
+
+cleanValue = cleanValue.replace(/[^\d.-]/g, "");
 
 const number = Number(cleanValue);
 
@@ -113,7 +144,8 @@ return value;
 
 function saveData(key, data) {
 try {
-localStorage.setItem(key, JSON.stringify(data));
+const storageKey = getOfficialStorageKey(key);
+localStorage.setItem(storageKey, JSON.stringify(data));
 return true;
 } catch (error) {
 console.error("Erro ao salvar dados:", error);
@@ -124,12 +156,24 @@ return false;
 
 function loadData(key, fallback = []) {
 try {
-const data = localStorage.getItem(key);
+const storageKeys = getStorageKeysWithAliases(key);
 
+for (let i = 0; i < storageKeys.length; i++) {
+  const storageKey = storageKeys[i];
+  const data = localStorage.getItem(storageKey);
 
-if (!data) return fallback;
+  if (!data) continue;
 
-return JSON.parse(data);
+  const parsed = JSON.parse(data);
+
+  if (i > 0 && isEmptyStorageValue(localStorage.getItem(storageKeys[0]))) {
+    localStorage.setItem(storageKeys[0], JSON.stringify(parsed));
+  }
+
+  return parsed;
+}
+
+return fallback;
 
 
 } catch (error) {
@@ -139,7 +183,56 @@ return fallback;
 }
 
 function removeData(key) {
-localStorage.removeItem(key);
+localStorage.removeItem(getOfficialStorageKey(key));
+}
+
+function getOfficialStorageKey(key) {
+if (!key) {
+return "";
+}
+
+if (BALU_KEYS[key]) {
+return BALU_KEYS[key];
+}
+
+return String(key);
+}
+
+function getStorageKeysWithAliases(key) {
+const officialKey = getOfficialStorageKey(key);
+const aliasGroup = Object.keys(BALU_KEYS).find(function (name) {
+return BALU_KEYS[name] === officialKey || name === key;
+});
+
+const keys = [officialKey];
+
+if (aliasGroup && Array.isArray(BALU_KEY_ALIASES[aliasGroup])) {
+BALU_KEY_ALIASES[aliasGroup].forEach(function (alias) {
+  if (alias && keys.indexOf(alias) < 0) {
+    keys.push(alias);
+  }
+});
+}
+
+return keys;
+}
+
+function isEmptyStorageValue(value) {
+if (value === null || value === undefined || value === "") {
+return true;
+}
+
+try {
+const parsed = JSON.parse(value);
+
+if (Array.isArray(parsed)) {
+  return parsed.length === 0;
+}
+
+return parsed === null || parsed === undefined;
+} catch (error) {
+return false;
+}
 }
 
 function generateId(prefix = "ID") {

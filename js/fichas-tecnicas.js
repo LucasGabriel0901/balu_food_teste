@@ -1,10 +1,10 @@
-// ==============================
+﻿// ==============================
 // BALU FOOD - FICHAS TÉCNICAS V2
 // Receitas, bases, composição, rendimento, resultado e precificação
 // ==============================
 
 var fichasTecnicasCache = [];
-var BALU_FICHAS_STORAGE_KEY = "balu_fichas_tecnicas_v2";
+var BALU_FICHAS_STORAGE_KEY = "balu_fichas_tecnicas";
 var fichaTipoItemSelecionado = "Insumo";
 
 if (document.readyState === "loading") {
@@ -24,6 +24,7 @@ garantirLinhaItemFicha();
 garantirLinhaCanalFicha();
 renderFichasTecnicas();
 atualizarPreviewFichaTecnica();
+atualizarDatalistFichaItens();
 criarIconesFicha();
 
 console.log("BALU Fichas Técnicas V2 carregado.");
@@ -161,12 +162,25 @@ if (botao.classList.contains("fichaCanalRemove")) {
 }, true);
 
 document.addEventListener("input", function (event) {
+if (event.target && event.target.classList.contains("fichaItemNome")) {
+preencherItemFichaPeloNome(event.target.closest(".inventory-item"));
+}
+
 if (campoFichaTecnica(event.target)) {
 atualizarPreviewFichaTecnica();
 }
 }, true);
 
 document.addEventListener("change", function (event) {
+if (event.target && event.target.classList.contains("fichaItemTipo")) {
+atualizarDatalistFichaItens();
+preencherItemFichaPeloNome(event.target.closest(".inventory-item"));
+}
+
+if (event.target && event.target.classList.contains("fichaItemNome")) {
+preencherItemFichaPeloNome(event.target.closest(".inventory-item"));
+}
+
 if (campoFichaTecnica(event.target)) {
 atualizarPreviewFichaTecnica();
 }
@@ -264,6 +278,10 @@ ativarAbaFicha("composicao");
 garantirLinhaItemFicha();
 garantirLinhaCanalFicha();
 atualizarPreviewFichaTecnica();
+
+if (typeof openDrawer === "function") {
+openDrawer("drawerFichaTecnica");
+}
 }
 
 function resetarFormularioFichaTecnica() {
@@ -418,7 +436,7 @@ div.innerHTML =
 
   "<div class='form-field'>" +
     "<label>Item</label>" +
-    "<input type='text' class='fichaItemNome' placeholder='Ex: Frango, arroz, embalagem...'>" +
+    "<input type='text' class='fichaItemNome' list='fichaItensDisponiveis' data-item-id='' data-item-codigo='' placeholder='Ex: Frango, arroz, embalagem...'>" +
   "</div>" +
 
   "<div class='form-field'>" +
@@ -461,8 +479,10 @@ setItemValueFicha(div, ".fichaItemNome", item.nome || "");
 setItemValueFicha(div, ".fichaItemQuantidade", item.quantidade || "");
 setItemValueFicha(div, ".fichaItemUnidade", item.unidade || "g");
 setItemValueFicha(div, ".fichaItemCustoUnitario", item.custoUnitario || "");
+preencherItemFichaPeloNome(div);
 
 atualizarPreviewFichaTecnica();
+atualizarDatalistFichaItens();
 criarIconesFicha();
 }
 
@@ -485,7 +505,7 @@ div.innerHTML =
 "<input type='text' class='fichaCanalNome' placeholder='Ex: Delivery Próprio'>" +
 "</div>" +
 
-```
+
   "<div class='form-field'>" +
     "<label>Preço</label>" +
     "<input type='text' class='fichaCanalPreco' inputmode='decimal' placeholder='0,00'>" +
@@ -513,7 +533,6 @@ div.innerHTML =
 
   "<button type='button' class='btn btn-outline btn-small fichaCanalRemove'>Remover</button>" +
 "</div>";
-```
 
 container.appendChild(div);
 
@@ -543,6 +562,7 @@ var quantidade = numeroFicha(getItemValueFicha(linha, ".fichaItemQuantidade"));
 var unidade = getItemValueFicha(linha, ".fichaItemUnidade") || "g";
 var custoUnitario = numeroFicha(getItemValueFicha(linha, ".fichaItemCustoUnitario"));
 var total = quantidade * custoUnitario;
+var campoNomeItem = linha.querySelector(".fichaItemNome");
 
 
 setItemValueFicha(linha, ".fichaItemTotal", moedaFicha(total));
@@ -550,6 +570,8 @@ setItemValueFicha(linha, ".fichaItemTotal", moedaFicha(total));
 if (nome && quantidade > 0 && custoUnitario > 0) {
   itens.push({
     tipo: tipo,
+    itemId: campoNomeItem ? campoNomeItem.dataset.itemId || "" : "",
+    codigo: campoNomeItem ? campoNomeItem.dataset.itemCodigo || "" : "",
     nome: nome,
     quantidade: quantidade,
     unidade: unidade,
@@ -1057,9 +1079,8 @@ table.innerHTML =
 "<td colspan='11' class='text-muted'>Nenhuma ficha técnica encontrada.</td>" +
 "</tr>";
 
-```
+
 return;
-```
 
 }
 
@@ -1402,6 +1423,184 @@ return;
 element.value = value === undefined || value === null ? "" : value;
 }
 
+function atualizarDatalistFichaItens() {
+var datalist = document.getElementById("fichaItensDisponiveis");
+
+if (!datalist) {
+datalist = document.createElement("datalist");
+datalist.id = "fichaItensDisponiveis";
+document.body.appendChild(datalist);
+}
+
+var itens = []
+.concat(montarItensCadastroFicha("Insumo"))
+.concat(montarItensCadastroFicha("Embalagem"))
+.concat(montarItensCadastroFicha("Base"));
+
+datalist.innerHTML = itens.map(function (item) {
+var label = [item.tipo, item.codigo].filter(Boolean).join(" - ");
+return "<option value='" + textoSeguroFicha(item.nome || "") + "' label='" + textoSeguroFicha(label) + "'></option>";
+}).join("");
+}
+
+function preencherItemFichaPeloNome(linha) {
+if (!linha) {
+return;
+}
+
+var tipo = getItemValueFicha(linha, ".fichaItemTipo") || "Insumo";
+var nome = getItemValueFicha(linha, ".fichaItemNome");
+var cadastro = buscarCadastroFichaPorNome(tipo, nome);
+var campoNome = linha.querySelector(".fichaItemNome");
+
+if (!campoNome) {
+return;
+}
+
+campoNome.dataset.itemId = "";
+campoNome.dataset.itemCodigo = "";
+
+if (!cadastro) {
+return;
+}
+
+campoNome.dataset.itemId = cadastro.id || "";
+campoNome.dataset.itemCodigo = cadastro.codigo || "";
+
+if (cadastro.unidade) {
+setItemValueFicha(linha, ".fichaItemUnidade", cadastro.unidade);
+}
+
+if (numeroFicha(getItemValueFicha(linha, ".fichaItemCustoUnitario")) <= 0 && cadastro.custoUnitario > 0) {
+setItemValueFicha(linha, ".fichaItemCustoUnitario", numeroParaInputFicha(cadastro.custoUnitario));
+}
+}
+
+function buscarCadastroFichaPorNome(tipo, nome) {
+var nomeNormalizado = normalizarTextoFicha(nome);
+
+if (!nomeNormalizado) {
+return null;
+}
+
+return montarItensCadastroFicha(tipo).find(function (item) {
+return normalizarTextoFicha(item.nome) === nomeNormalizado ||
+normalizarTextoFicha(item.codigo) === nomeNormalizado;
+}) || null;
+}
+
+function montarItensCadastroFicha(tipo) {
+if (tipo === "Insumo") {
+return carregarListaFichaStorage("insumos", "balu_insumos").map(function (item) {
+return {
+tipo: "Insumo",
+id: item.id || "",
+codigo: item.codigo || "",
+nome: item.nome || "",
+unidade: item.unidadeConsumo || item.unidadeCompra || "g",
+custoUnitario: obterCustoCadastroFicha("Insumo", item)
+};
+});
+}
+
+if (tipo === "Embalagem") {
+return carregarListaFichaStorage("embalagens", "balu_embalagens").map(function (item) {
+return {
+tipo: "Embalagem",
+id: item.id || "",
+codigo: item.codigo || "",
+nome: item.nome || "",
+unidade: item.unidade || "un",
+custoUnitario: obterCustoCadastroFicha("Embalagem", item)
+};
+});
+}
+
+if (tipo === "Base") {
+return fichasTecnicasCache.filter(function (ficha) {
+return ficha.tipo === "Base" || ficha.tipo === "Receita";
+}).map(function (ficha) {
+return {
+tipo: "Base",
+id: ficha.id || "",
+codigo: ficha.codigo || "",
+nome: ficha.nome || "",
+unidade: ficha.unidadeRendimento || "un",
+custoUnitario: numeroFicha(ficha.custoPorPorcao || ficha.custoTotal || 0)
+};
+});
+}
+
+return [];
+}
+
+function carregarListaFichaStorage(nomeChave, fallbackChave) {
+var chave = fallbackChave;
+
+if (typeof BALU_KEYS !== "undefined" && BALU_KEYS && BALU_KEYS[nomeChave]) {
+chave = BALU_KEYS[nomeChave];
+}
+
+if (typeof loadData === "function") {
+var dadosLoad = loadData(chave, []);
+
+if (Array.isArray(dadosLoad)) {
+return dadosLoad;
+}
+}
+
+try {
+var dados = localStorage.getItem(chave);
+
+if (!dados) {
+return [];
+}
+
+var lista = JSON.parse(dados);
+return Array.isArray(lista) ? lista : [];
+} catch (erro) {
+console.warn("Erro ao carregar cadastro para ficha:", chave, erro);
+return [];
+}
+}
+
+function obterCustoCadastroFicha(tipo, item) {
+if (tipo === "Insumo") {
+var unidade = normalizarTextoFicha(item.unidadeConsumo || item.unidadeCompra || "");
+var custoUnitario = numeroFicha(item.custoUnitario || item.precoUnitario);
+var precoMedioKg = numeroFicha(item.precoMedioKg);
+
+if (custoUnitario > 0) {
+  return custoUnitario;
+}
+
+if ((unidade === "g" || unidade === "gramas") && precoMedioKg > 0) {
+  return precoMedioKg / 1000;
+}
+
+if ((unidade === "kg" || unidade === "quilo") && precoMedioKg > 0) {
+  return precoMedioKg;
+}
+
+return numeroFicha(item.precoMedio || item.valorUnitario || 0);
+}
+
+return numeroFicha(item.precoUnitario || item.precoMedioPacote || item.custoUnitario || 0);
+}
+
+function numeroParaInputFicha(valor) {
+var numero = numeroFicha(valor);
+return numero === 0 ? "" : String(numero);
+}
+
+function normalizarTextoFicha(value) {
+return String(value || "")
+.toLowerCase()
+.normalize("NFD")
+.replace(/[\u0300-\u036f]/g, "")
+.trim();
+}
+
 function numeroFicha(valor) {
 if (valor === null || valor === undefined || valor === "") {
 return 0;
@@ -1419,7 +1618,7 @@ var texto = String(valor)
 .trim();
 
 if (texto.indexOf(",") >= 0) {
-texto = texto.replace(/./g, "").replace(",", ".");
+texto = texto.replace(/\\./g, "").replace(",", ".");
 }
 
 var numero = Number(texto);

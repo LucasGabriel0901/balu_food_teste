@@ -468,13 +468,11 @@ var receitaAtraso = 0;
 clientesValidos.forEach(function (cliente) {
 atualizarFinanceiroCliente(cliente);
 
-```
 mrrBruto += cliente.valorMensal;
 
 if (cliente.statusConta === "Inadimplente" || cliente.statusPagamento === "Atrasado") {
   receitaAtraso += cliente.valorMensal;
 }
-```
 
 });
 

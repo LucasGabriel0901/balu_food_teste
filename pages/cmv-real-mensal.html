@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="pt-BR">
 <head>
@@ -18,6 +18,7 @@
 
   <link rel="stylesheet" href="../css/global.css">
   <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/banners.css">
   <link rel="stylesheet" href="../css/estoque.css">
   <link rel="stylesheet" href="../css/financeiro.css">
 </head>
@@ -28,11 +29,11 @@
       <section class="page">
 
 
-    <!-- Cabeçalho da página -->
+    <!-- CabeÃ§alho da pÃ¡gina -->
     <div class="page-header">
       <div>
         <h1>CMV Real Mensal</h1>
-        <p>Feche o custo real da operação usando inventário inicial, compras e inventário final.</p>
+        <p>Feche o custo real da operaÃ§Ã£o usando inventÃ¡rio inicial, compras e inventÃ¡rio final.</p>
       </div>
 
       <div class="page-actions">
@@ -41,7 +42,7 @@
           Exportar
         </button>
 
-        <button type="button" class="btn btn-primary" id="btnNovoCmv" onclick="openDrawer('drawerCmv')">
+        <button type="button" class="btn btn-primary" id="btnNovoCmv">
           <i data-lucide="plus"></i>
           Novo Fechamento
         </button>
@@ -51,7 +52,7 @@
     <!-- Cards superiores -->
     <div class="kpi-grid">
       <div class="kpi-card green">
-        <span>Faturamento do mês</span>
+        <span>Faturamento do mÃªs</span>
         <strong id="cmvFaturamentoMes">R$ 0,00</strong>
         <small>Base para calcular o percentual do CMV.</small>
       </div>
@@ -70,26 +71,26 @@
 
       <div class="kpi-card red">
         <span>Status do CMV</span>
-        <strong id="cmvStatusMes">Não calculado</strong>
-        <small>Classificação automática do resultado.</small>
+        <strong id="cmvStatusMes">NÃ£o calculado</strong>
+        <small>ClassificaÃ§Ã£o automÃ¡tica do resultado.</small>
       </div>
     </div>
 
     <!-- Resultado principal -->
     <div class="cmv-result-box">
-      <span>Resultado do último fechamento</span>
+      <span>Resultado do Ãºltimo fechamento</span>
       <strong id="cmvResultadoPrincipal">R$ 0,00</strong>
       <small id="cmvResultadoDescricao">
         Nenhum fechamento mensal foi salvo ainda.
       </small>
     </div>
 
-    <!-- Fórmula do CMV -->
+    <!-- FÃ³rmula do CMV -->
     <div class="finance-panel">
       <div class="finance-panel-header">
         <div>
-          <h2>Fórmula do CMV Real</h2>
-          <p>O CMV mostra quanto foi consumido de insumos e embalagens para gerar o faturamento do mês.</p>
+          <h2>FÃ³rmula do CMV Real</h2>
+          <p>O CMV mostra quanto foi consumido de insumos e embalagens para gerar o faturamento do mÃªs.</p>
         </div>
 
         <span id="cmvClassificacaoBadge" class="badge purple">Aguardando dados</span>
@@ -104,7 +105,7 @@
         <div class="calc-flow-symbol">+</div>
 
         <div class="calc-flow-card">
-          <span>Compras do Mês</span>
+          <span>Compras do MÃªs</span>
           <strong id="cmvResumoCompras">R$ 0,00</strong>
         </div>
 
@@ -144,37 +145,37 @@
       </div>
     </div>
 
-    <!-- Classificação -->
+    <!-- ClassificaÃ§Ã£o -->
     <div class="finance-panel">
       <div class="finance-panel-header">
         <div>
           <h2>Leitura do resultado</h2>
-          <p>Essa régua ajuda o cliente a entender se o custo está saudável ou precisa de atenção.</p>
+          <p>Essa rÃ©gua ajuda o cliente a entender se o custo estÃ¡ saudÃ¡vel ou precisa de atenÃ§Ã£o.</p>
         </div>
       </div>
 
       <div class="cmv-classification-grid">
         <div class="cmv-classification-card excellent">
-          <strong>Até 25%</strong>
+          <strong>AtÃ© 25%</strong>
           <span>Excelente</span>
-          <small>Operação com bom controle de custo.</small>
+          <small>OperaÃ§Ã£o com bom controle de custo.</small>
         </div>
 
         <div class="cmv-classification-card expected">
           <strong>26% a 35%</strong>
           <span>Dentro do esperado</span>
-          <small>Resultado comum para muitas operações.</small>
+          <small>Resultado comum para muitas operaÃ§Ãµes.</small>
         </div>
 
         <div class="cmv-classification-card warning">
           <strong>36% a 45%</strong>
-          <span>Atenção</span>
-          <small>Revisar compras, perdas e precificação.</small>
+          <span>AtenÃ§Ã£o</span>
+          <small>Revisar compras, perdas e precificaÃ§Ã£o.</small>
         </div>
 
         <div class="cmv-classification-card critical">
           <strong>Acima de 45%</strong>
-          <span>Crítico</span>
+          <span>CrÃ­tico</span>
           <small>Custo alto comprometendo a margem.</small>
         </div>
       </div>
@@ -188,7 +189,7 @@
             type="search"
             id="searchCmv"
             class="cadastro-search"
-            placeholder="Buscar por competência, responsável ou observação..."
+            placeholder="Buscar por competÃªncia, responsÃ¡vel ou observaÃ§Ã£o..."
           >
         </div>
 
@@ -197,16 +198,16 @@
             <option value="">Todos os status</option>
             <option value="Aberto">Aberto</option>
             <option value="Fechado">Fechado</option>
-            <option value="Revisão">Revisão</option>
+            <option value="RevisÃ£o">RevisÃ£o</option>
             <option value="Cancelado">Cancelado</option>
           </select>
 
           <select id="filterClassificacaoCmv" class="cadastro-filter">
-            <option value="">Todas as classificações</option>
+            <option value="">Todas as classificaÃ§Ãµes</option>
             <option value="Excelente">Excelente</option>
             <option value="Dentro do esperado">Dentro do esperado</option>
-            <option value="Atenção">Atenção</option>
-            <option value="Crítico">Crítico</option>
+            <option value="AtenÃ§Ã£o">AtenÃ§Ã£o</option>
+            <option value="CrÃ­tico">CrÃ­tico</option>
           </select>
         </div>
       </div>
@@ -214,16 +215,16 @@
       <table class="data-table">
         <thead>
           <tr>
-            <th>Competência</th>
+            <th>CompetÃªncia</th>
             <th>Faturamento</th>
             <th>Estoque Inicial</th>
             <th>Compras</th>
             <th>Estoque Final</th>
             <th>CMV Real</th>
             <th>CMV %</th>
-            <th>Classificação</th>
+            <th>ClassificaÃ§Ã£o</th>
             <th>Status</th>
-            <th>Ações</th>
+            <th>AÃ§Ãµes</th>
           </tr>
         </thead>
 
@@ -243,7 +244,7 @@
 
   </div>
 
-  <!-- Drawer de cadastro/edição do CMV -->
+  <!-- Drawer de cadastro/ediÃ§Ã£o do CMV -->
 
   <aside class="drawer" id="drawerCmv">
     <div class="drawer-header">
@@ -251,7 +252,7 @@
 
 
   <button type="button" class="drawer-close" onclick="closeDrawer()">
-    ×
+    Ã—
   </button>
 </div>
 
@@ -266,7 +267,7 @@
 
       <div class="form-grid">
         <div class="form-field">
-          <label for="cmvCompetencia">Competência *</label>
+          <label for="cmvCompetencia">CompetÃªncia *</label>
           <input type="month" id="cmvCompetencia" required>
         </div>
 
@@ -276,7 +277,7 @@
         </div>
 
         <div class="form-field">
-          <label for="cmvResponsavel">Responsável *</label>
+          <label for="cmvResponsavel">ResponsÃ¡vel *</label>
           <input type="text" id="cmvResponsavel" placeholder="Ex: Lucas Gabriel" required>
         </div>
 
@@ -285,7 +286,7 @@
           <select id="cmvStatus" required>
             <option value="Aberto">Aberto</option>
             <option value="Fechado">Fechado</option>
-            <option value="Revisão">Revisão</option>
+            <option value="RevisÃ£o">RevisÃ£o</option>
             <option value="Cancelado">Cancelado</option>
           </select>
         </div>
@@ -298,7 +299,7 @@
 
       <div class="form-grid">
         <div class="form-field">
-          <label for="cmvFaturamento">Faturamento do mês *</label>
+          <label for="cmvFaturamento">Faturamento do mÃªs *</label>
           <input type="number" id="cmvFaturamento" min="0" step="0.01" placeholder="Ex: 60000" required>
         </div>
 
@@ -336,14 +337,14 @@
 
         <div class="form-field full">
           <label for="cmvMotivoAjuste">Motivo dos ajustes</label>
-          <textarea id="cmvMotivoAjuste" placeholder="Ex: perdas por vencimento, quebra, degustação, evento interno..."></textarea>
+          <textarea id="cmvMotivoAjuste" placeholder="Ex: perdas por vencimento, quebra, degustaÃ§Ã£o, evento interno..."></textarea>
         </div>
       </div>
     </div>
 
-    <!-- Resultado automático -->
+    <!-- Resultado automÃ¡tico -->
     <div class="form-section">
-      <h3 class="form-section-title">Resultado automático</h3>
+      <h3 class="form-section-title">Resultado automÃ¡tico</h3>
 
       <div class="calculated-box">
         <div class="calculated-grid">
@@ -368,8 +369,8 @@
           </div>
 
           <div class="calculated-item">
-            <span>Classificação</span>
-            <strong id="cmvClassificacaoPreview">Não calculado</strong>
+            <span>ClassificaÃ§Ã£o</span>
+            <strong id="cmvClassificacaoPreview">NÃ£o calculado</strong>
           </div>
 
           <div class="calculated-item">
@@ -380,14 +381,14 @@
       </div>
     </div>
 
-    <!-- Observações -->
+    <!-- ObservaÃ§Ãµes -->
     <div class="form-section">
-      <h3 class="form-section-title">Informações adicionais</h3>
+      <h3 class="form-section-title">InformaÃ§Ãµes adicionais</h3>
 
       <div class="form-grid">
         <div class="form-field full">
-          <label for="cmvObservacoes">Observações internas</label>
-          <textarea id="cmvObservacoes" placeholder="Ex: mês com evento grande, compras atípicas, perdas, divergências de estoque..."></textarea>
+          <label for="cmvObservacoes">ObservaÃ§Ãµes internas</label>
+          <textarea id="cmvObservacoes" placeholder="Ex: mÃªs com evento grande, compras atÃ­picas, perdas, divergÃªncias de estoque..."></textarea>
         </div>
       </div>
     </div>
@@ -408,7 +409,7 @@
 
   </aside>
 
-  <!-- Ícones -->
+  <!-- Ãcones -->
 <script src="https://unpkg.com/lucide@latest"></script>
 
 <script src="../js/app.js"></script>
@@ -419,358 +420,9 @@
 
 <script src="../js/auth-guard.js"></script>
 
-<script src="../js/dashboard.js"></script>
-
+<script src="../js/banners.js"></script>
 
   <script src="../js/cmv-real-mensal.js"></script>
-
-  <script>
-  (function () {
-    function iniciarFixCmvBalu() {
-      console.log("FIX de CMV BALU ativo");
-
-      window.calcularCmv = calcularCmvBaluFix;
-      window.atualizarPreviewCmv = atualizarPreviewCmvBaluFix;
-      window.preencherValoresAutomaticos = preencherValoresAutomaticosBaluFix;
-
-      document.addEventListener("input", function (event) {
-        if (campoCmvBalu(event.target)) {
-          atualizarPreviewCmvBaluFix();
-        }
-      }, true);
-
-      document.addEventListener("change", function (event) {
-        if (campoCmvBalu(event.target)) {
-          if (event.target.id === "cmvCompetencia") {
-            preencherValoresAutomaticosBaluFix();
-          }
-
-          atualizarPreviewCmvBaluFix();
-        }
-      }, true);
-
-      document.addEventListener("click", function () {
-        setTimeout(function () {
-          atualizarPreviewCmvBaluFix();
-        }, 100);
-      }, true);
-
-      setTimeout(function () {
-        preencherValoresAutomaticosBaluFix();
-        atualizarPreviewCmvBaluFix();
-      }, 300);
-
-      setTimeout(function () {
-        preencherValoresAutomaticosBaluFix();
-        atualizarPreviewCmvBaluFix();
-      }, 900);
-    }
-
-    function campoCmvBalu(campo) {
-      if (!campo) {
-        return false;
-      }
-
-      return (
-        campo.id === "cmvCompetencia" ||
-        campo.id === "cmvFaturamento" ||
-        campo.id === "cmvEstoqueInicial" ||
-        campo.id === "cmvCompras" ||
-        campo.id === "cmvEstoqueFinal" ||
-        campo.id === "cmvPerdas" ||
-        campo.id === "cmvAjustes"
-      );
-    }
-
-    function preencherValoresAutomaticosBaluFix() {
-      var competencia = valorCampoCmvBalu("cmvCompetencia");
-
-      if (!competencia) {
-        competencia = competenciaAtualCmvBalu();
-        setarValorCmvBalu("cmvCompetencia", competencia);
-      }
-
-      var inventarioInicial = pegarUltimoInventarioCmvBalu("Inicial", competencia);
-      var inventarioFinal = pegarUltimoInventarioCmvBalu("Final", competencia);
-      var compras = pegarComprasConfirmadasCmvBalu(competencia);
-
-      setarValorCmvBalu("cmvEstoqueInicial", inventarioInicial);
-      setarValorCmvBalu("cmvCompras", compras);
-      setarValorCmvBalu("cmvEstoqueFinal", inventarioFinal);
-    }
-
-    function calcularCmvBaluFix() {
-      var faturamento = numeroCmvBalu(valorCampoCmvBalu("cmvFaturamento"));
-      var estoqueInicial = numeroCmvBalu(valorCampoCmvBalu("cmvEstoqueInicial"));
-      var compras = numeroCmvBalu(valorCampoCmvBalu("cmvCompras"));
-      var estoqueFinal = numeroCmvBalu(valorCampoCmvBalu("cmvEstoqueFinal"));
-      var perdas = numeroCmvBalu(valorCampoCmvBalu("cmvPerdas"));
-      var ajustes = numeroCmvBalu(valorCampoCmvBalu("cmvAjustes"));
-
-      var cmvReal = estoqueInicial + compras - estoqueFinal + perdas + ajustes;
-
-      if (cmvReal < 0) {
-        cmvReal = 0;
-      }
-
-      var cmvPercentual = faturamento > 0 ? (cmvReal / faturamento) * 100 : 0;
-      var lucroBruto = faturamento - cmvReal;
-      var margemBruta = faturamento > 0 ? (lucroBruto / faturamento) * 100 : 0;
-
-      var classificacao = "Não calculado";
-      var leitura = "Aguardando dados";
-
-      if (faturamento > 0 && cmvReal > 0) {
-        classificacao = classificarCmvBalu(cmvPercentual);
-        leitura = leituraCmvBalu(classificacao);
-      }
-
-      return {
-        faturamento: faturamento,
-        estoqueInicial: estoqueInicial,
-        compras: compras,
-        estoqueFinal: estoqueFinal,
-        perdas: perdas,
-        ajustes: ajustes,
-        cmvReal: cmvReal,
-        cmvPercentual: cmvPercentual,
-        lucroBruto: lucroBruto,
-        margemBruta: margemBruta,
-        classificacao: classificacao,
-        leitura: leitura
-      };
-    }
-
-    function atualizarPreviewCmvBaluFix() {
-      var resultado = calcularCmvBaluFix();
-
-      setarTextoCmvBalu("cmvRealPreview", moedaCmvBalu(resultado.cmvReal));
-      setarTextoCmvBalu("cmvPercentPreview", percentualCmvBalu(resultado.cmvPercentual));
-      setarTextoCmvBalu("lucroBrutoPreview", moedaCmvBalu(resultado.lucroBruto));
-      setarTextoCmvBalu("margemBrutaPreview", percentualCmvBalu(resultado.margemBruta));
-      setarTextoCmvBalu("cmvClassificacaoPreview", resultado.classificacao);
-      setarTextoCmvBalu("cmvLeituraPreview", resultado.leitura);
-
-      return resultado;
-    }
-
-    function pegarUltimoInventarioCmvBalu(tipo, competencia) {
-      var inventarios = buscarListaStorageCmvBalu([
-        pegarChaveBalu("inventarios"),
-        "balu_inventarios",
-        "inventarios"
-      ]);
-
-      var lista = inventarios.filter(function (inventario) {
-        var mesmoTipo = inventario.tipo === tipo;
-        var mesmaCompetencia = !competencia || inventario.competencia === competencia;
-        var valido = inventario.status !== "Cancelado";
-
-        return mesmoTipo && mesmaCompetencia && valido;
-      });
-
-      if (lista.length === 0) {
-        return 0;
-      }
-
-      return numeroCmvBalu(lista[lista.length - 1].totalGeral);
-    }
-
-    function pegarComprasConfirmadasCmvBalu(competencia) {
-      var compras = buscarListaStorageCmvBalu([
-        pegarChaveBalu("compras"),
-        "balu_compras",
-        "compras"
-      ]);
-
-      return compras.reduce(function (soma, compra) {
-        var statusOk = compra.status === "Confirmada";
-        var competenciaOk = !competencia || !compra.competencia || compra.competencia === competencia;
-
-        if (statusOk && competenciaOk) {
-          return soma + numeroCmvBalu(compra.total);
-        }
-
-        return soma;
-      }, 0);
-    }
-
-    function buscarListaStorageCmvBalu(chaves) {
-      for (var i = 0; i < chaves.length; i++) {
-        var chave = chaves[i];
-
-        if (!chave) {
-          continue;
-        }
-
-        try {
-          var dados = localStorage.getItem(chave);
-
-          if (!dados) {
-            continue;
-          }
-
-          var lista = JSON.parse(dados);
-
-          if (Array.isArray(lista) && lista.length > 0) {
-            return lista;
-          }
-        } catch (erro) {
-          console.warn("Erro ao ler storage:", chave, erro);
-        }
-      }
-
-      return [];
-    }
-
-    function pegarChaveBalu(nome) {
-      if (window.BALU_KEYS && window.BALU_KEYS[nome]) {
-        return window.BALU_KEYS[nome];
-      }
-
-      return "";
-    }
-
-    function valorCampoCmvBalu(id) {
-      var campo = document.getElementById(id);
-
-      if (!campo) {
-        return "";
-      }
-
-      return campo.value;
-    }
-
-    function setarValorCmvBalu(id, valor) {
-      var campo = document.getElementById(id);
-
-      if (!campo) {
-        return;
-      }
-
-      campo.value = valor;
-    }
-
-    function setarTextoCmvBalu(id, valor) {
-      var campo = document.getElementById(id);
-
-      if (!campo) {
-        return;
-      }
-
-      if (campo.tagName === "INPUT" || campo.tagName === "TEXTAREA" || campo.tagName === "SELECT") {
-        campo.value = valor;
-      } else {
-        campo.textContent = valor;
-      }
-    }
-
-    function numeroCmvBalu(valor) {
-      if (valor === null || valor === undefined || valor === "") {
-        return 0;
-      }
-
-      if (typeof valor === "number") {
-        return isNaN(valor) ? 0 : valor;
-      }
-
-      var texto = String(valor)
-        .replace("R$", "")
-        .replace("%", "")
-        .replace(/\s/g, "")
-        .trim();
-
-      if (texto.indexOf(",") >= 0) {
-        texto = texto.replace(/\./g, "").replace(",", ".");
-      }
-
-      var numero = Number(texto);
-
-      if (isNaN(numero)) {
-        return 0;
-      }
-
-      return numero;
-    }
-
-    function moedaCmvBalu(valor) {
-      var numero = Number(valor);
-
-      if (isNaN(numero)) {
-        numero = 0;
-      }
-
-      return numero.toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL"
-      });
-    }
-
-    function percentualCmvBalu(valor) {
-      var numero = Number(valor);
-
-      if (isNaN(numero)) {
-        numero = 0;
-      }
-
-      return numero.toLocaleString("pt-BR", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      }) + "%";
-    }
-
-    function classificarCmvBalu(percentual) {
-      if (percentual <= 25) {
-        return "Excelente";
-      }
-
-      if (percentual <= 35) {
-        return "Dentro do esperado";
-      }
-
-      if (percentual <= 45) {
-        return "Atenção";
-      }
-
-      return "Crítico";
-    }
-
-    function leituraCmvBalu(classificacao) {
-      if (classificacao === "Excelente") {
-        return "Operação com bom controle de custo.";
-      }
-
-      if (classificacao === "Dentro do esperado") {
-        return "Resultado dentro de uma faixa aceitável.";
-      }
-
-      if (classificacao === "Atenção") {
-        return "Revisar compras, perdas e precificação.";
-      }
-
-      if (classificacao === "Crítico") {
-        return "Custo alto comprometendo a margem.";
-      }
-
-      return "Aguardando dados";
-    }
-
-    function competenciaAtualCmvBalu() {
-      var hoje = new Date();
-      var ano = hoje.getFullYear();
-      var mes = String(hoje.getMonth() + 1).padStart(2, "0");
-
-      return ano + "-" + mes;
-    }
-
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", iniciarFixCmvBalu);
-    } else {
-      iniciarFixCmvBalu();
-    }
-  })();
-</script>
-
-
 </body>
 </html>
+

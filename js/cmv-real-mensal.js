@@ -112,6 +112,10 @@ setValue("cmvStatus", "Aberto");
 
 preencherValoresAutomaticos();
 atualizarPreviewCmv();
+
+if (typeof openDrawer === "function") {
+openDrawer("drawerCmv");
+}
 }
 
 function resetarFormularioCmv() {
@@ -289,7 +293,7 @@ var estoqueFinal = safeNumber(getValue("cmvEstoqueFinal"));
 var perdas = safeNumber(getValue("cmvPerdas"));
 var ajustes = safeNumber(getValue("cmvAjustes"));
 
-var cmvReal = estoqueInicial + compras - estoqueFinal + perdas + ajustes;
+var cmvReal = estoqueInicial + compras - estoqueFinal;
 
 if (cmvReal < 0) {
 cmvReal = 0;

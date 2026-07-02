@@ -331,7 +331,7 @@ var texto = String(valor)
 .trim();
 
 if (texto.indexOf(",") >= 0) {
-texto = texto.replace(/./g, "").replace(",", ".");
+texto = texto.replace(/\./g, "").replace(",", ".");
 }
 
 var numero = Number(texto);
