@@ -52,7 +52,7 @@ renderIndicadoresRelatorios(resumo);
 renderAtencoesRelatorios(resumo);
 renderComprasRelatorios(resumo.comprasFiltradas);
 renderVendasProducaoRelatorios(resumo.vendasProducaoFiltradas);
-renderEstoqueRelatorios(resumo.itensEstoqueAtencao);
+renderEstoqueRelatorios(resumo.itensEstoque);
 renderFichasAtencaoRelatorios(resumo.fichasAtencao);
 
 setTextRelatorio("relatorioUltimaAtualizacao", formatarDataHoraRelatorio(new Date()));
@@ -110,6 +110,36 @@ fichas: carregarListaRelatorio([
   "balu_fichas_tecnicas",
   "balu_fichas_tecnicas_v2",
   "fichas_tecnicas"
+]),
+
+fornecedores: carregarListaRelatorio([
+  "balu_fornecedores",
+  "fornecedores"
+]),
+
+faturamento: carregarListaRelatorio([
+  "balu_faturamento",
+  "faturamento"
+]),
+
+faturamentoMensalValor: carregarValorRelatorio([
+  "balu_faturamento_mensal",
+  "faturamentoMensal"
+]),
+
+precificacoes: carregarListaRelatorio([
+  "balu_precificacoes",
+  "precificacoes"
+]),
+
+produtos: carregarListaRelatorio([
+  "balu_produtos",
+  "produtos"
+]),
+
+producaoPlanejada: carregarListaRelatorio([
+  "balu_producao_planejada",
+  "producao_planejada"
 ])
 
 
@@ -128,6 +158,14 @@ var vendasProducaoFiltradas = filtrarListaPorPeriodoRelatorio(dados.vendasProduc
 return registro.data || registro.dataVenda || registro.competencia || registro.criadoEm || registro.createdAt;
 });
 
+var faturamentoFiltrado = filtrarListaPorPeriodoRelatorio(dados.faturamento, periodo, function (registro) {
+return registro.data || registro.competencia || registro.criadoEm || registro.createdAt;
+});
+
+var producaoPlanejadaFiltrada = filtrarListaPorPeriodoRelatorio(dados.producaoPlanejada, periodo, function (registro) {
+return registro.data || registro.competencia || registro.criadoEm || registro.createdAt;
+});
+
 var totalCompras = somarListaRelatorio(comprasFiltradas, function (compra) {
 return obterTotalCompraRelatorio(compra);
 });
@@ -143,6 +181,19 @@ return registro.quantidade || registro.qtd || 0;
 var custoVendasProducao = somarListaRelatorio(vendasProducaoConfirmadas, function (registro) {
 return registro.custoEstoqueBaixado || registro.custoEstimado || registro.custoTotal || 0;
 });
+
+var faturamentoConfirmado = faturamentoFiltrado.filter(function (registro) {
+var status = String(registro.status || "Confirmado").toLowerCase();
+return status.indexOf("confirm") >= 0 || status.indexOf("receb") >= 0 || status.indexOf("pago") >= 0;
+});
+
+var totalFaturamento = somarListaRelatorio(faturamentoConfirmado, function (registro) {
+return registro.valor || registro.total || registro.faturamento || 0;
+});
+
+if (totalFaturamento <= 0) {
+totalFaturamento = numeroRelatorio(dados.faturamentoMensalValor);
+}
 
 var comprasPendentes = comprasFiltradas.filter(function (compra) {
 var status = String(compra.status || compra.situacao || "").toLowerCase();
@@ -161,6 +212,7 @@ var resumoEmbalagens = resumirEstoqueRelatorio(dados.embalagens, "Embalagem");
 
 var valorEstoque = resumoInsumos.valorEstoque + resumoEmbalagens.valorEstoque;
 var itensEstoqueAtencao = resumoInsumos.itensAtencao.concat(resumoEmbalagens.itensAtencao);
+var itensEstoque = resumoInsumos.itensEstoque.concat(resumoEmbalagens.itensEstoque);
 
 var custoMaoObra = somarListaRelatorio(dados.funcionarios, function (funcionario) {
 return numeroRelatorio(
@@ -181,12 +233,12 @@ return item.data || item.dataFechamento || item.competencia || item.criadoEm || 
 });
 
 var cmvPercentual = obterPercentualCmvRelatorio(ultimoCmv);
-var cmvRealValor = numeroRelatorio(
+var cmvRealValor = ultimoCmv ? numeroRelatorio(
 ultimoCmv.cmvReal ||
 ultimoCmv.cmvValor ||
 ultimoCmv.valorCmv ||
 ultimoCmv.custoMercadoriaVendida
-);
+) : 0;
 
 var fichasAtivas = dados.fichas.filter(function (ficha) {
 return String(ficha.status || "").toLowerCase() !== "inativa";
@@ -244,6 +296,11 @@ vendasProducaoFiltradas: vendasProducaoFiltradas,
 inventarios: dados.inventarios,
 cmv: dados.cmv,
 fichas: dados.fichas,
+fornecedores: dados.fornecedores,
+faturamento: dados.faturamento,
+precificacoes: dados.precificacoes,
+produtos: dados.produtos,
+producaoPlanejada: dados.producaoPlanejada,
 
 totalCompras: totalCompras,
 qtdCompras: comprasFiltradas.length,
@@ -254,6 +311,9 @@ vendasProducaoConfirmadas: vendasProducaoConfirmadas.length,
 quantidadeVendasProducao: quantidadeVendasProducao,
 custoVendasProducao: custoVendasProducao,
 
+totalFaturamento: totalFaturamento,
+qtdFaturamento: faturamentoFiltrado.length,
+
 totalInsumos: dados.insumos.length,
 valorInsumos: resumoInsumos.valorEstoque,
 
@@ -263,9 +323,11 @@ valorEmbalagens: resumoEmbalagens.valorEstoque,
 valorEstoque: valorEstoque,
 estoqueBaixo: itensEstoqueAtencao.length,
 itensEstoqueAtencao: itensEstoqueAtencao,
+itensEstoque: itensEstoque,
 
 totalFuncionarios: dados.funcionarios.length,
 custoMaoObra: custoMaoObra,
+totalFornecedores: dados.fornecedores.length,
 
 totalInventarios: dados.inventarios.length,
 ultimoInventario: ultimoInventario,
@@ -278,6 +340,16 @@ cmvAlto: cmvAlto,
 totalFichas: dados.fichas.length,
 custoMedioFicha: custoMedioFicha,
 fichasAtencao: fichasAtencao,
+totalProdutos: dados.produtos.length,
+produtosAtivos: dados.produtos.filter(function (produto) {
+  return String(produto.status || "Ativo").toLowerCase() !== "inativo";
+}).length,
+totalPrecificacoes: dados.precificacoes.length,
+totalProducaoPlanejada: producaoPlanejadaFiltrada.length,
+producaoPlanejadaAberta: producaoPlanejadaFiltrada.filter(function (registro) {
+  var status = String(registro.status || "").toLowerCase();
+  return status.indexOf("cancel") < 0 && status.indexOf("conclu") < 0;
+}).length,
 
 pontosAtencao: pontosAtencao,
 saudeOperacional: saudeOperacional
@@ -346,6 +418,16 @@ moedaRelatorio(resumo.custoVendasProducao) + "."
 );
 
 setTextRelatorio("relatorioSaudeOperacional", resumo.saudeOperacional);
+setTextRelatorio("relatorioFaturamentoTotal", moedaRelatorio(resumo.totalFaturamento));
+setTextRelatorio("relatorioFaturamentoResumo", resumo.qtdFaturamento + " lançamento(s) no período.");
+setTextRelatorio("relatorioTotalFornecedores", resumo.totalFornecedores);
+setTextRelatorio("relatorioFornecedoresResumo", resumo.totalFornecedores + " fornecedor(es) cadastrado(s).");
+setTextRelatorio("relatorioTotalProdutos", resumo.totalProdutos);
+setTextRelatorio("relatorioProdutosResumo", resumo.produtosAtivos + " produto(s) ativo(s).");
+setTextRelatorio("relatorioTotalCmv", resumo.cmv.length);
+setTextRelatorio("relatorioCmvResumo", resumo.ultimoCmv ? "Último: " + formatarDataTextoRelatorio(resumo.ultimoCmv.competencia || resumo.ultimoCmv.dataFechamento || resumo.ultimoCmv.criadoEm) : "Nenhum fechamento encontrado.");
+setTextRelatorio("relatorioTotalProducaoPlanejada", resumo.totalProducaoPlanejada);
+setTextRelatorio("relatorioProducaoPlanejadaResumo", resumo.producaoPlanejadaAberta + " registro(s) em aberto.");
 }
 
 function renderIndicadoresRelatorios(resumo) {
@@ -510,7 +592,7 @@ return;
 if (!itens.length) {
 table.innerHTML =
 "<tr>" +
-"<td colspan='6' class='text-muted'>Nenhum item em atenção encontrado.</td>" +
+"<td colspan='6' class='text-muted'>Nenhum item de estoque encontrado.</td>" +
 "</tr>";
 
 
@@ -524,8 +606,8 @@ return (
 "<tr>" +
 "<td><strong>" + textoSeguroRelatorio(item.nome || "-") + "</strong></td>" +
 "<td>" + textoSeguroRelatorio(item.tipo || "-") + "</td>" +
-"<td>" + numeroFormatoRelatorio(item.estoqueAtual) + "</td>" +
-"<td>" + numeroFormatoRelatorio(item.estoqueMinimo) + "</td>" +
+"<td>" + numeroFormatoRelatorio(item.estoqueAtual) + " " + textoSeguroRelatorio(item.unidade || "") + "</td>" +
+"<td>" + numeroFormatoRelatorio(item.estoqueMinimo) + " " + textoSeguroRelatorio(item.unidade || "") + "</td>" +
 "<td>" + moedaRelatorio(item.valorEstoque) + "</td>" +
 "<td>" + badgeStatusRelatorio(item.status || "Atenção") + "</td>" +
 "</tr>"
@@ -570,14 +652,16 @@ return (
 function resumirEstoqueRelatorio(lista, tipo) {
 var valorEstoque = 0;
 var itensAtencao = [];
+var itensEstoque = [];
 
 lista.forEach(function (item) {
 var nome = obterNomeItemRelatorio(item);
 var estoqueAtual = numeroRelatorio(item.estoqueAtual || item.quantidadeEstoque || item.quantidade || item.qtdAtual);
 var estoqueMinimo = numeroRelatorio(item.estoqueMinimo || item.minimo || item.qtdMinima);
 var estoqueIdeal = numeroRelatorio(item.estoqueIdeal || item.ideal || item.qtdIdeal);
-var valorItem = obterValorEstoqueRelatorio(item);
+var valorItem = obterValorEstoqueRelatorio(item, tipo);
 var status = item.statusEstoque || item.status || "";
+var unidade = obterUnidadeEstoqueRelatorio(item, tipo);
 
 
 valorEstoque = valorEstoque + valorItem;
@@ -603,12 +687,24 @@ if (emAtencao) {
   });
 }
 
+itensEstoque.push({
+  nome: nome,
+  tipo: tipo,
+  unidade: unidade,
+  estoqueAtual: estoqueAtual,
+  estoqueMinimo: estoqueMinimo,
+  estoqueIdeal: estoqueIdeal,
+  valorEstoque: valorItem,
+  status: status || classificarEstoqueRelatorio(estoqueAtual, estoqueMinimo, estoqueIdeal)
+});
+
 
 });
 
 return {
 valorEstoque: valorEstoque,
-itensAtencao: itensAtencao
+itensAtencao: itensAtencao,
+itensEstoque: itensEstoque
 };
 }
 
@@ -640,7 +736,7 @@ item.produto ||
 );
 }
 
-function obterValorEstoqueRelatorio(item) {
+function obterValorEstoqueRelatorio(item, tipo) {
 var valorDireto = numeroRelatorio(
 item.valorEstoque ||
 item.valorEstoqueAtual ||
@@ -653,16 +749,68 @@ return valorDireto;
 }
 
 var estoqueAtual = numeroRelatorio(item.estoqueAtual || item.quantidadeEstoque || item.quantidade || item.qtdAtual);
+var tipoNormalizado = String(tipo || "").toLowerCase();
 
-var custo =
-numeroRelatorio(item.precoMedioKg) ||
-numeroRelatorio(item.precoMedioUnidade) ||
-numeroRelatorio(item.precoUnitario) ||
-numeroRelatorio(item.custoUnitario) ||
-numeroRelatorio(item.precoMedio) ||
-numeroRelatorio(item.valorUnitario);
+if (tipoNormalizado.indexOf("insumo") >= 0) {
+var unidade = obterUnidadeEstoqueRelatorio(item, tipo);
+var precoMedioKg = numeroRelatorio(item.precoMedioKg);
+var custoUnitario = numeroRelatorio(item.custoUnitario || item.precoUnitario);
+var precoMedio = numeroRelatorio(item.precoMedio || item.valorUnitario);
 
-return estoqueAtual * custo;
+if (unidade === "g" && precoMedioKg > 0) {
+  return (estoqueAtual / 1000) * precoMedioKg;
+}
+
+if (unidade === "kg" && precoMedioKg > 0) {
+  return estoqueAtual * precoMedioKg;
+}
+
+return estoqueAtual * (custoUnitario || precoMedio || precoMedioKg);
+}
+
+var precoUnitario = numeroRelatorio(item.precoUnitario);
+var precoMedioPacote = numeroRelatorio(item.precoMedioPacote);
+var quantidadePacote = numeroRelatorio(item.quantidadePacote);
+
+if (precoUnitario <= 0 && quantidadePacote > 0 && precoMedioPacote > 0) {
+precoUnitario = precoMedioPacote / quantidadePacote;
+}
+
+return estoqueAtual * precoUnitario;
+}
+
+function obterUnidadeEstoqueRelatorio(item, tipo) {
+var unidade = tipo === "Insumo"
+? item.unidadeConsumo || item.unidadeCompra || item.unidade || "unidade"
+: item.unidade || "unidade";
+
+var texto = String(unidade || "")
+.toLowerCase()
+.normalize("NFD")
+.replace(/[\u0300-\u036f]/g, "")
+.trim();
+
+if (["g", "gr", "grama", "gramas"].indexOf(texto) >= 0) {
+return "g";
+}
+
+if (["kg", "quilo", "quilos", "quilograma", "quilogramas", "kilograma", "kilogramas"].indexOf(texto) >= 0) {
+return "kg";
+}
+
+if (["ml", "mililitro", "mililitros"].indexOf(texto) >= 0) {
+return "ml";
+}
+
+if (["l", "lt", "litro", "litros"].indexOf(texto) >= 0) {
+return "litro";
+}
+
+if (["un", "und", "unid", "unidade", "unidades"].indexOf(texto) >= 0) {
+return "unidade";
+}
+
+return texto || "unidade";
 }
 
 function obterTotalCompraRelatorio(compra) {
@@ -793,8 +941,14 @@ linhas.push("Pontos de atencao;" + resumo.pontosAtencao);
 linhas.push("Insumos cadastrados;" + resumo.totalInsumos);
 linhas.push("Embalagens cadastradas;" + resumo.totalEmbalagens);
 linhas.push("Funcionarios;" + resumo.totalFuncionarios);
+linhas.push("Fornecedores;" + resumo.totalFornecedores);
 linhas.push("Inventarios;" + resumo.totalInventarios);
+linhas.push("Fechamentos CMV;" + resumo.cmv.length);
 linhas.push("Fichas tecnicas;" + resumo.totalFichas);
+linhas.push("Faturamento;" + numeroExportRelatorio(resumo.totalFaturamento));
+linhas.push("Produtos;" + resumo.totalProdutos);
+linhas.push("Precificacoes;" + resumo.totalPrecificacoes);
+linhas.push("Producao planejada;" + resumo.totalProducaoPlanejada);
 linhas.push("Vendas/Producao;" + resumo.totalVendasProducao);
 linhas.push("Vendas/Producao confirmadas;" + resumo.vendasProducaoConfirmadas);
 linhas.push("Quantidade vendas/producao;" + numeroExportRelatorio(resumo.quantidadeVendasProducao));
@@ -858,6 +1012,42 @@ try {
 }
 
 return [];
+}
+
+function carregarValorRelatorio(chaves) {
+for (var i = 0; i < chaves.length; i++) {
+var chave = chaves[i];
+
+try {
+  if (typeof loadData === "function") {
+    var valorLoad = loadData(chave, null);
+
+    if (valorLoad !== null && valorLoad !== undefined && !Array.isArray(valorLoad) && typeof valorLoad !== "object") {
+      return valorLoad;
+    }
+  }
+
+  var dados = localStorage.getItem(chave);
+
+  if (!dados) {
+    continue;
+  }
+
+  try {
+    var parsed = JSON.parse(dados);
+
+    if (typeof parsed === "number" || typeof parsed === "string") {
+      return parsed;
+    }
+  } catch (erroJson) {
+    return dados;
+  }
+} catch (erro) {
+  console.warn("Erro ao carregar valor:", chave, erro);
+}
+}
+
+return 0;
 }
 
 function carregarObjetoRelatorio(chaves) {

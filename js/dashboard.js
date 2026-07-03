@@ -36,6 +36,7 @@ var fechamentosCmv = carregarListaDashboard("cmv", ["balu_cmv_mensal", "balu_cmv
 var funcionarios = carregarListaDashboard("funcionarios", ["balu_funcionarios"]);
 var fichasTecnicas = carregarListaDashboard("fichasTecnicas", ["balu_fichas_tecnicas", "balu_fichas_tecnicas_v2"]);
 var vendasProducao = carregarListaDashboard("vendasProducao", ["balu_vendas_producao", "balu_vendas_manuais"]);
+var faturamentoRegistros = carregarListaDashboard("faturamento", ["balu_faturamento"]);
 
 var competenciaAtual = getCurrentCompetencia();
 
@@ -74,7 +75,12 @@ if (ultimoCmv) {
 faturamento = numeroDashboard(ultimoCmv.faturamento || ultimoCmv.cmvFaturamento || ultimoCmv.receita || 0);
 cmvReal = numeroDashboard(ultimoCmv.cmvReal || ultimoCmv.resultado || ultimoCmv.totalCmv || 0);
 } else {
-faturamento = numeroDashboard(carregarValorDashboard("faturamentoMensal", ["balu_faturamento_mensal"]));
+faturamento = obterFaturamentoDashboard(faturamentoRegistros, competenciaAtual);
+
+if (faturamento <= 0) {
+  faturamento = numeroDashboard(carregarValorDashboard("faturamentoMensal", ["balu_faturamento_mensal"]));
+}
+
 cmvReal = Math.max(0, inventarioInicial + totalCompras - inventarioFinal);
 }
 
@@ -219,6 +225,10 @@ var valorItem = numeroDashboard(
   0
 );
 
+if (valorItem <= 0) {
+  valorItem = obterValorEstoqueDashboard(item, tipo);
+}
+
 valorEstoque += valorItem;
 
 if (statusPrincipal !== "Inativo") {
@@ -292,6 +302,83 @@ resumo.innerHTML =
 "</div>";
 
 
+}
+
+function obterFaturamentoDashboard(registros, competencia) {
+if (!Array.isArray(registros)) {
+return 0;
+}
+
+return registros.reduce(function (total, registro) {
+var status = limparTextoDashboard(registro.status || registro.situacao || "Confirmado", "").toLowerCase();
+var data = String(registro.data || registro.competencia || "");
+var confirmado = status.indexOf("confirm") >= 0 || status.indexOf("receb") >= 0 || status.indexOf("pago") >= 0;
+var pertenceCompetencia = !competencia || !data || data.substring(0, 7) === competencia;
+
+return confirmado && pertenceCompetencia
+  ? total + numeroDashboard(registro.valor || registro.total || registro.faturamento)
+  : total;
+}, 0);
+}
+
+function obterValorEstoqueDashboard(item, tipo) {
+var estoqueAtual = numeroDashboard(
+item.estoqueAtual ||
+item.embEstoqueAtual ||
+item.quantidadeEstoque ||
+item.estoque ||
+0
+);
+var tipoNormalizado = String(tipo || "").toLowerCase();
+
+if (tipoNormalizado.indexOf("insumo") >= 0) {
+var unidade = normalizarUnidadeDashboard(item.unidadeConsumo || item.unidadeCompra || item.unidade || "");
+var precoMedioKg = numeroDashboard(item.precoMedioKg);
+var custoUnitario = numeroDashboard(item.custoUnitario || item.precoUnitario);
+var precoMedio = numeroDashboard(item.precoMedio || item.valorUnitario);
+
+if (unidade === "g" && precoMedioKg > 0) {
+  return (estoqueAtual / 1000) * precoMedioKg;
+}
+
+if (unidade === "kg" && precoMedioKg > 0) {
+  return estoqueAtual * precoMedioKg;
+}
+
+return estoqueAtual * (custoUnitario || precoMedio || precoMedioKg);
+}
+
+var precoUnitario = numeroDashboard(item.precoUnitario);
+var precoMedioPacote = numeroDashboard(item.precoMedioPacote);
+var quantidadePacote = numeroDashboard(item.quantidadePacote);
+
+if (precoUnitario <= 0 && quantidadePacote > 0 && precoMedioPacote > 0) {
+precoUnitario = precoMedioPacote / quantidadePacote;
+}
+
+return estoqueAtual * precoUnitario;
+}
+
+function normalizarUnidadeDashboard(unidade) {
+var texto = limparTextoDashboard(unidade, "")
+.toLowerCase()
+.normalize("NFD")
+.replace(/[\u0300-\u036f]/g, "")
+.trim();
+
+if (["g", "gr", "grama", "gramas"].indexOf(texto) >= 0) {
+return "g";
+}
+
+if (["kg", "quilo", "quilos", "quilograma", "quilogramas", "kilograma", "kilogramas"].indexOf(texto) >= 0) {
+return "kg";
+}
+
+if (["un", "und", "unid", "unidade", "unidades"].indexOf(texto) >= 0) {
+return "unidade";
+}
+
+return texto || "unidade";
 }
 
 function renderVendasProducaoDashboard(vendasProducaoDoMes, competenciaAtual) {

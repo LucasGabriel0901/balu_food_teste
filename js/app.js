@@ -19,7 +19,12 @@ cmv: "balu_cmv_mensal",
 fichasTecnicas: "balu_fichas_tecnicas",
 fichas_tecnicas: "balu_fichas_tecnicas",
 vendasProducao: "balu_vendas_producao",
+fornecedores: "balu_fornecedores",
+faturamento: "balu_faturamento",
 faturamentoMensal: "balu_faturamento_mensal",
+precificacoes: "balu_precificacoes",
+produtos: "balu_produtos",
+producaoPlanejada: "balu_producao_planejada",
 banners: "balu_publicidade_banners",
 configuracoes: "balu_configuracoes_empresa"
 };
@@ -28,7 +33,8 @@ const BALU_KEY_ALIASES = {
 compras: ["balu_compras"],
 cmv: ["balu_cmv"],
 fichasTecnicas: ["balu_fichas_tecnicas_v2", "balu_fichas_tecnicas"],
-vendasProducao: ["balu_vendas_manuais"]
+vendasProducao: ["balu_vendas_manuais"],
+faturamento: ["balu_faturamento_mensal"]
 };
 
 window.BALU_KEYS = BALU_KEYS;

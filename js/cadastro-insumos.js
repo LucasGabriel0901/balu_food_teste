@@ -2048,7 +2048,7 @@ var estoqueIdeal = numeroAlertaInsumo(item.estoqueIdeal);
 var precoMedioKg = numeroAlertaInsumo(item.precoMedioKg);
 var custoUnitario = numeroAlertaInsumo(item.custoUnitario);
 var precoMedio = numeroAlertaInsumo(item.precoMedio);
-var unidade = item.unidadeConsumo || item.unidadeCompra || "";
+var unidade = normalizarUnidadeInsumo(item.unidadeConsumo || item.unidadeCompra || "");
 
 var faltaParaIdeal = 0;
 
@@ -2060,10 +2060,14 @@ faltaParaIdeal = estoqueMinimo - estoqueAtual;
 
 var valorReposicao = 0;
 
-if (unidade === "unidade") {
-valorReposicao = faltaParaIdeal * (custoUnitario || precoMedio);
-} else if (precoMedioKg > 0) {
+if (unidade === "g" && precoMedioKg > 0) {
 valorReposicao = (faltaParaIdeal / 1000) * precoMedioKg;
+} else if (unidade === "kg" && precoMedioKg > 0) {
+valorReposicao = faltaParaIdeal * precoMedioKg;
+} else if (unidade === "unidade") {
+valorReposicao = faltaParaIdeal * (custoUnitario || precoMedio);
+} else {
+valorReposicao = faltaParaIdeal * (custoUnitario || precoMedio || precoMedioKg);
 }
 
 return Object.assign({}, item, {
@@ -2120,7 +2124,7 @@ drawer.innerHTML =
 "<h2>Alerta de estoque baixo</h2>" +
 "<p>Itens que estão em atenção, críticos ou abaixo do estoque ideal.</p>" +
 "</div>" +
-"<button type='button' class='drawer-close' onclick='closeDrawer()'>Ã—</button>" +
+"<button type='button' class='drawer-close' onclick='closeDrawer()'>&times;</button>" +
 "</div>" +
 "<div class='drawer-body'>" +
 "<div id='alertaEstoqueInsumosConteudo'>" +

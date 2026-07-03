@@ -883,14 +883,7 @@ if (!itemCompra || itemCompra.tipo === "Outro") {
 var movido = movimentarItemEstoqueCompra(itemCompra, direcao);
 
 if (movido) {
-  movimentacoes.push({
-    tipo: itemCompra.tipo,
-    itemId: itemCompra.itemId || "",
-    codigo: itemCompra.codigo || "",
-    nome: itemCompra.nome || "",
-    quantidade: numeroCompra(itemCompra.quantidade),
-    unidade: itemCompra.unidade || "unidade"
-  });
+  movimentacoes.push(movido);
 }
 });
 
@@ -908,8 +901,12 @@ console.warn(tipo + " nao encontrado no estoque:", itemCompra.nome);
 return false;
 }
 
-var quantidade = numeroCompra(itemCompra.quantidade) * direcao;
-itemEstoque.estoqueAtual = Math.max(0, numeroCompra(itemEstoque.estoqueAtual) + quantidade);
+var unidadeOrigem = itemCompra.unidade || obterUnidadeCadastroCompra(tipo, itemEstoque);
+var unidadeEstoque = obterUnidadeCadastroCompra(tipo, itemEstoque);
+var quantidadeOriginal = numeroCompra(itemCompra.quantidade);
+var quantidadeEstoque = converterQuantidadeCompra(quantidadeOriginal, unidadeOrigem, unidadeEstoque);
+
+itemEstoque.estoqueAtual = Math.max(0, numeroCompra(itemEstoque.estoqueAtual) + (quantidadeEstoque * direcao));
 
 if (tipo === "Insumo") {
 recalcularInsumoDepoisDaCompra(itemEstoque);
@@ -920,7 +917,17 @@ recalcularEmbalagemDepoisDaCompra(itemEstoque);
 itemEstoque.atualizadoEm = new Date().toISOString();
 salvarListaLocalCompra(chave, lista);
 recarregarCadastrosCompra();
-return true;
+
+return {
+tipo: itemCompra.tipo,
+itemId: itemCompra.itemId || "",
+codigo: itemCompra.codigo || itemEstoque.codigo || "",
+nome: itemCompra.nome || itemEstoque.nome || "",
+quantidade: quantidadeEstoque,
+unidade: unidadeEstoque,
+quantidadeOriginal: quantidadeOriginal,
+unidadeOriginal: unidadeOrigem
+};
 }
 
 function buscarItemEstoqueCompra(lista, itemCompra) {
@@ -948,13 +955,9 @@ var estoqueIdeal = numeroCompra(insumo.estoqueIdeal);
 var precoMedio = numeroCompra(insumo.precoMedio);
 var precoMedioKg = numeroCompra(insumo.precoMedioKg);
 var custoUnitario = numeroCompra(insumo.custoUnitario);
-var unidadeConsumo = String(insumo.unidadeConsumo || insumo.unidadeCompra || "").toLowerCase();
+var unidadeConsumo = normalizarUnidadeCompra(insumo.unidadeConsumo || insumo.unidadeCompra || "");
 
-if (unidadeConsumo === "unidade") {
-insumo.valorEstoque = estoqueAtual * (custoUnitario || precoMedio);
-} else {
-insumo.valorEstoque = (estoqueAtual / 1000) * precoMedioKg;
-}
+insumo.valorEstoque = calcularValorEstoqueInsumoCompra(estoqueAtual, unidadeConsumo, precoMedioKg, custoUnitario, precoMedio);
 
 insumo.statusEstoque = calcularStatusEstoqueCompra(estoqueAtual, estoqueMinimo, estoqueIdeal, insumo.status || "Ativo");
 }
@@ -1033,18 +1036,103 @@ return montarValorOpcaoCompra(tipo, item) === valor;
 
 function obterUnidadeCadastroCompra(tipo, item) {
 if (tipo === "Insumo") {
-return item.unidadeConsumo || item.unidadeCompra || "unidade";
+return normalizarUnidadeCompra(item.unidadeConsumo || item.unidadeCompra || "unidade");
 }
 
-return item.unidade || "unidade";
+return normalizarUnidadeCompra(item.unidade || "unidade");
 }
 
 function obterPrecoCadastroCompra(tipo, item) {
 if (tipo === "Insumo") {
-return numeroCompra(item.custoUnitario || item.precoUnitario || item.precoMedio || item.precoMedioKg || 0);
+var unidade = obterUnidadeCadastroCompra(tipo, item);
+var precoMedioKg = numeroCompra(item.precoMedioKg);
+var custoUnitario = numeroCompra(item.custoUnitario || item.precoUnitario);
+var precoMedio = numeroCompra(item.precoMedio);
+
+if (unidade === "g" && precoMedioKg > 0) {
+  return precoMedioKg / 1000;
+}
+
+if (unidade === "kg" && precoMedioKg > 0) {
+  return precoMedioKg;
+}
+
+return custoUnitario || precoMedio || precoMedioKg || 0;
 }
 
 return numeroCompra(item.precoUnitario || item.precoMedioPacote || 0);
+}
+
+function calcularValorEstoqueInsumoCompra(quantidade, unidade, precoMedioKg, custoUnitario, precoMedio) {
+var estoqueAtual = numeroCompra(quantidade);
+var unidadeNormalizada = normalizarUnidadeCompra(unidade);
+var precoKg = numeroCompra(precoMedioKg);
+var custoUnit = numeroCompra(custoUnitario);
+var precoMedioNumero = numeroCompra(precoMedio);
+
+if (unidadeNormalizada === "g" && precoKg > 0) {
+return (estoqueAtual / 1000) * precoKg;
+}
+
+if (unidadeNormalizada === "kg" && precoKg > 0) {
+return estoqueAtual * precoKg;
+}
+
+return estoqueAtual * (custoUnit || precoMedioNumero || precoKg);
+}
+
+function converterQuantidadeCompra(quantidade, unidadeOrigem, unidadeDestino) {
+var valor = numeroCompra(quantidade);
+var origem = normalizarUnidadeCompra(unidadeOrigem);
+var destino = normalizarUnidadeCompra(unidadeDestino);
+
+if (origem === destino) {
+return valor;
+}
+
+if (origem === "g" && destino === "kg") {
+return valor / 1000;
+}
+
+if (origem === "kg" && destino === "g") {
+return valor * 1000;
+}
+
+if (origem === "ml" && destino === "litro") {
+return valor / 1000;
+}
+
+if (origem === "litro" && destino === "ml") {
+return valor * 1000;
+}
+
+return valor;
+}
+
+function normalizarUnidadeCompra(unidade) {
+var texto = normalizarNomeEstoqueCompra(unidade || "");
+
+if (["g", "gr", "grama", "gramas"].indexOf(texto) >= 0) {
+return "g";
+}
+
+if (["kg", "quilo", "quilos", "quilograma", "quilogramas", "kilograma", "kilogramas"].indexOf(texto) >= 0) {
+return "kg";
+}
+
+if (["ml", "mililitro", "mililitros"].indexOf(texto) >= 0) {
+return "ml";
+}
+
+if (["l", "lt", "litro", "litros"].indexOf(texto) >= 0) {
+return "litro";
+}
+
+if (["un", "und", "unid", "unidade", "unidades"].indexOf(texto) >= 0) {
+return "unidade";
+}
+
+return texto || "unidade";
 }
 
 function pegarUltimoInventarioTotalCompra(tipo, competencia) {

@@ -697,7 +697,7 @@ modal.innerHTML =
 "<span>Novo cliente</span>" +
 "<h2>Cadastrar cliente no SaaS</h2>" +
 "</div>" +
-"<button type='button' id='btnFecharModalCliente' class='panel-modal-close'>Ã—</button>" +
+"<button type='button' id='btnFecharModalCliente' class='panel-modal-close'>&times;</button>" +
 "</div>" +
 "<form id='formNovoClientePainel' class='panel-modal-form'>" +
 "<div class='panel-field'>" +
@@ -1064,7 +1064,7 @@ function gerarSlug(texto) {
 var slug = String(texto || "")
 .toLowerCase()
 .trim()
-.replace(/[áÃ ãâ]/g, "a")
+.replace(/[áàãâ]/g, "a")
 .replace(/[éê]/g, "e")
 .replace(/[í]/g, "i")
 .replace(/[óôõ]/g, "o")

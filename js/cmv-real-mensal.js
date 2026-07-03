@@ -10,7 +10,7 @@ initCmvRealMensal();
 });
 
 function initCmvRealMensal() {
-cmvCache = loadData(BALU_KEYS.cmv, []);
+cmvCache = carregarCmvLocal();
 
 initEventosCmv();
 renderCmv();
@@ -214,10 +214,10 @@ showToast("Fechamento de CMV salvo com sucesso.", "success");
 
 }
 
-saveData(BALU_KEYS.cmv, cmvCache);
+salvarCmvLocal();
 
 if (cmv.faturamento > 0) {
-localStorage.setItem(BALU_KEYS.faturamentoMensal, cmv.faturamento);
+localStorage.setItem(obterChaveCmv("faturamentoMensal", "balu_faturamento_mensal"), JSON.stringify(cmv.faturamento));
 }
 
 closeDrawer();
@@ -273,7 +273,7 @@ cmvCache = cmvCache.filter(function (item) {
 return item.id !== id;
 });
 
-saveData(BALU_KEYS.cmv, cmvCache);
+salvarCmvLocal();
 
 renderCmv();
 
@@ -531,12 +531,13 @@ return "<span class='badge purple'>Não calculado</span>";
 }
 
 function pegarUltimoInventarioTotal(tipo, competencia) {
-var inventarios = loadData(BALU_KEYS.inventarios, []);
+var inventarios = carregarListaCmv("inventarios", "balu_inventarios");
 
 var lista = inventarios.filter(function (inventario) {
 var mesmoTipo = inventario.tipo === tipo;
 var mesmaCompetencia = !competencia || inventario.competencia === competencia;
-var valido = inventario.status !== "Cancelado";
+var status = String(inventario.status || "Finalizado").toLowerCase();
+var valido = status.indexOf("cancel") < 0;
 
 
 return mesmoTipo && mesmaCompetencia && valido;
@@ -548,14 +549,19 @@ if (lista.length === 0) {
 return 0;
 }
 
+lista = lista.slice().sort(function (a, b) {
+return String(a.data || a.dataInventario || a.criadoEm || "").localeCompare(String(b.data || b.dataInventario || b.criadoEm || ""));
+});
+
 return safeNumber(lista[lista.length - 1].totalGeral);
 }
 
 function pegarTotalComprasConfirmadas(competencia) {
-var compras = loadData(BALU_KEYS.compras, []);
+var compras = carregarListaCmv("compras", "balu_compras_realizadas");
 
 return compras.reduce(function (soma, compra) {
-var statusOk = compra.status === "Confirmada";
+var status = String(compra.status || compra.situacao || "").toLowerCase();
+var statusOk = status.indexOf("confirm") >= 0 || status.indexOf("pago") >= 0 || status.indexOf("finaliz") >= 0;
 var competenciaOk = !competencia || !compra.competencia || compra.competencia === competencia;
 
 
@@ -570,12 +576,81 @@ return soma;
 }
 
 function obterFaturamentoMensalSalvo() {
-try {
-var valor = localStorage.getItem(BALU_KEYS.faturamentoMensal);
-return safeNumber(valor) > 0 ? safeNumber(valor) : "";
-} catch (erro) {
-return "";
+var competencia = getValue("cmvCompetencia") || competenciaAtualInput();
+var faturamentoRegistros = carregarListaCmv("faturamento", "balu_faturamento");
+var totalRegistros = faturamentoRegistros.reduce(function (total, item) {
+var status = String(item.status || "Confirmado").toLowerCase();
+var data = String(item.data || item.competencia || "");
+var pertenceCompetencia = !competencia || data.substring(0, 7) === competencia;
+var confirmado = status.indexOf("confirm") >= 0 || status.indexOf("receb") >= 0 || status.indexOf("pago") >= 0;
+
+return confirmado && pertenceCompetencia ? total + safeNumber(item.valor || item.total || item.faturamento) : total;
+}, 0);
+
+if (totalRegistros > 0) {
+return totalRegistros;
 }
+
+var valorMensal = carregarValorCmv("faturamentoMensal", "balu_faturamento_mensal");
+return safeNumber(valorMensal) > 0 ? safeNumber(valorMensal) : "";
+}
+
+function carregarCmvLocal() {
+var dados = carregarListaCmv("cmv", "balu_cmv_mensal");
+return Array.isArray(dados) ? dados : [];
+}
+
+function salvarCmvLocal() {
+if (typeof saveData === "function") {
+saveData("cmv", cmvCache);
+return;
+}
+
+localStorage.setItem("balu_cmv_mensal", JSON.stringify(cmvCache));
+}
+
+function carregarListaCmv(nomeChave, chavePadrao) {
+if (typeof loadData === "function") {
+var dadosLoad = loadData(nomeChave, []);
+
+if (Array.isArray(dadosLoad)) {
+  return dadosLoad;
+}
+}
+
+try {
+var texto = localStorage.getItem(obterChaveCmv(nomeChave, chavePadrao));
+var dados = texto ? JSON.parse(texto) : [];
+return Array.isArray(dados) ? dados : [];
+} catch (erro) {
+return [];
+}
+}
+
+function carregarValorCmv(nomeChave, chavePadrao) {
+try {
+var texto = localStorage.getItem(obterChaveCmv(nomeChave, chavePadrao));
+
+if (!texto) {
+  return 0;
+}
+
+try {
+  return JSON.parse(texto);
+} catch (erroJson) {
+  return texto;
+}
+} catch (erro) {
+return 0;
+}
+}
+
+function obterChaveCmv(nomeChave, chavePadrao) {
+if (typeof BALU_KEYS !== "undefined" && BALU_KEYS && BALU_KEYS[nomeChave]) {
+return BALU_KEYS[nomeChave];
+}
+
+return chavePadrao;
 }
 
 function exportarCmv() {

@@ -1570,16 +1570,16 @@ var unidade = normalizarTextoFicha(item.unidadeConsumo || item.unidadeCompra || 
 var custoUnitario = numeroFicha(item.custoUnitario || item.precoUnitario);
 var precoMedioKg = numeroFicha(item.precoMedioKg);
 
-if (custoUnitario > 0) {
-  return custoUnitario;
-}
-
 if ((unidade === "g" || unidade === "gramas") && precoMedioKg > 0) {
   return precoMedioKg / 1000;
 }
 
 if ((unidade === "kg" || unidade === "quilo") && precoMedioKg > 0) {
   return precoMedioKg;
+}
+
+if (custoUnitario > 0) {
+return custoUnitario;
 }
 
 return numeroFicha(item.precoMedio || item.valorUnitario || 0);

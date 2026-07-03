@@ -769,8 +769,11 @@ if (!cadastro) {
   return;
 }
 
-cadastro.estoqueAtual = numeroInventario(item.quantidade);
-cadastro.valorEstoque = calcularValorFisicoInventario(item.tipo, item.quantidade, item.unidade, item.custoUnitario, item.custoReferencia);
+var unidadeCadastro = obterUnidadeCadastroInventario(item.tipo, cadastro);
+var quantidadeCadastro = converterQuantidadeInventario(item.quantidade, item.unidade, unidadeCadastro);
+
+cadastro.estoqueAtual = quantidadeCadastro;
+cadastro.valorEstoque = calcularValorFisicoInventario(item.tipo, quantidadeCadastro, unidadeCadastro, item.custoUnitario, item.custoReferencia);
 cadastro.statusEstoque = calcularStatusEstoqueInventario(cadastro);
 cadastro.atualizadoEm = new Date().toISOString();
 ajustou = true;
@@ -1053,6 +1056,34 @@ return (quantidadeNumero / 1000) * custoNumero;
 }
 
 return quantidadeNumero * custoNumero;
+}
+
+function converterQuantidadeInventario(quantidade, unidadeOrigem, unidadeDestino) {
+var valor = numeroInventario(quantidade);
+var origem = normalizarUnidadeMedidaInventario(unidadeOrigem);
+var destino = normalizarUnidadeMedidaInventario(unidadeDestino);
+
+if (origem === destino) {
+return valor;
+}
+
+if (origem === "g" && destino === "kg") {
+return valor / 1000;
+}
+
+if (origem === "kg" && destino === "g") {
+return valor * 1000;
+}
+
+if (origem === "ml" && destino === "litro") {
+return valor / 1000;
+}
+
+if (origem === "litro" && destino === "ml") {
+return valor * 1000;
+}
+
+return valor;
 }
 
 function ehUnidadePesoInventario(unidade) {
