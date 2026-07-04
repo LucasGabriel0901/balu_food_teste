@@ -914,3 +914,116 @@ grid-template-columns: 1fr;
 padding: 0 14px;
 }
 }
+
+/* ========================================
+TEMA ESCURO ADMINISTRATIVO
+======================================== */
+
+:root:not([data-theme]),
+:root[data-theme="dark"] {
+--panel-bg: #020617;
+--panel-card: #0f172a;
+--panel-text: #f8fafc;
+--panel-muted: #94a3b8;
+--panel-border: #263449;
+--panel-purple: #10b981;
+--panel-purple-dark: #6ee7b7;
+--panel-green: #22c55e;
+--panel-orange: #f59e0b;
+--panel-red: #ef4444;
+--panel-blue: #38bdf8;
+--panel-dark: #020617;
+--panel-shadow: 0 24px 70px rgba(0, 0, 0, 0.34);
+}
+
+:root:not([data-theme]) body.painel-body,
+:root[data-theme="dark"] body.painel-body {
+background:
+radial-gradient(circle at top left, rgba(16, 185, 129, 0.18), transparent 34%),
+radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.12), transparent 30%),
+var(--panel-bg);
+}
+
+:root:not([data-theme]) .panel-login-screen,
+:root[data-theme="dark"] .panel-login-screen {
+background:
+radial-gradient(circle at top left, rgba(16, 185, 129, 0.16), transparent 34%),
+radial-gradient(circle at bottom right, rgba(245, 158, 11, 0.10), transparent 34%),
+#020617;
+}
+
+:root:not([data-theme]) .panel-login-card,
+:root[data-theme="dark"] .panel-login-card,
+:root:not([data-theme]) .panel-topbar,
+:root[data-theme="dark"] .panel-topbar,
+:root:not([data-theme]) .panel-card,
+:root[data-theme="dark"] .panel-card,
+:root:not([data-theme]) .panel-box,
+:root[data-theme="dark"] .panel-box,
+:root:not([data-theme]) .panel-page-intro,
+:root[data-theme="dark"] .panel-page-intro,
+:root:not([data-theme]) .panel-modal,
+:root[data-theme="dark"] .panel-modal {
+background: rgba(15, 23, 42, 0.94);
+border-color: var(--panel-border);
+box-shadow: var(--panel-shadow);
+}
+
+:root:not([data-theme]) .panel-field label,
+:root[data-theme="dark"] .panel-field label,
+:root:not([data-theme]) .panel-login-brand strong,
+:root[data-theme="dark"] .panel-login-brand strong,
+:root:not([data-theme]) .panel-login-header h1,
+:root[data-theme="dark"] .panel-login-header h1,
+:root:not([data-theme]) .panel-topbar-brand strong,
+:root[data-theme="dark"] .panel-topbar-brand strong,
+:root:not([data-theme]) .panel-page-intro h1,
+:root[data-theme="dark"] .panel-page-intro h1 {
+color: var(--panel-text);
+}
+
+:root:not([data-theme]) .panel-login-brand span,
+:root[data-theme="dark"] .panel-login-brand span,
+:root:not([data-theme]) .panel-login-header p,
+:root[data-theme="dark"] .panel-login-header p,
+:root:not([data-theme]) .panel-topbar-brand span,
+:root[data-theme="dark"] .panel-topbar-brand span,
+:root:not([data-theme]) .panel-page-intro p,
+:root[data-theme="dark"] .panel-page-intro p {
+color: var(--panel-muted);
+}
+
+:root:not([data-theme]) .panel-field input,
+:root[data-theme="dark"] .panel-field input,
+:root:not([data-theme]) .panel-field select,
+:root[data-theme="dark"] .panel-field select,
+:root:not([data-theme]) .panel-field textarea,
+:root[data-theme="dark"] .panel-field textarea {
+background: #111827;
+border-color: var(--panel-border);
+color: var(--panel-text);
+}
+
+:root:not([data-theme]) .panel-secondary-button,
+:root[data-theme="dark"] .panel-secondary-button {
+background: #111827;
+border-color: var(--panel-border);
+color: var(--panel-text);
+}
+
+:root:not([data-theme]) .panel-kicker,
+:root[data-theme="dark"] .panel-kicker {
+background: rgba(16, 185, 129, 0.16);
+color: #86efac;
+}
+
+.panel-main {
+display: grid;
+gap: 20px;
+}
+
+.panel-grid-cards,
+.panel-summary-grid,
+.panel-kpi-grid {
+align-items: stretch;
+}

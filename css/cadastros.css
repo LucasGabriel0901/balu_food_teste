@@ -675,3 +675,91 @@ grid-template-columns: 1fr;
 width: 100%;
 }
 }
+
+/* ===============================
+TEMA ESCURO E HARMONIA VISUAL
+================================ */
+
+:root:not([data-theme]) .page-header h1,
+:root[data-theme="dark"] .page-header h1,
+:root:not([data-theme]) .cadastro-summary-card strong,
+:root[data-theme="dark"] .cadastro-summary-card strong,
+:root:not([data-theme]) .product-cell strong,
+:root[data-theme="dark"] .product-cell strong,
+:root:not([data-theme]) .import-help-card strong,
+:root[data-theme="dark"] .import-help-card strong {
+color: var(--balu-text);
+}
+
+:root:not([data-theme]) .page-header p,
+:root[data-theme="dark"] .page-header p,
+:root:not([data-theme]) .cadastro-summary-card span,
+:root[data-theme="dark"] .cadastro-summary-card span,
+:root:not([data-theme]) .cadastro-summary-card small,
+:root[data-theme="dark"] .cadastro-summary-card small,
+:root:not([data-theme]) .product-cell span,
+:root[data-theme="dark"] .product-cell span,
+:root:not([data-theme]) .import-help-card,
+:root[data-theme="dark"] .import-help-card {
+color: var(--balu-muted);
+}
+
+:root:not([data-theme]) .cadastro-summary-card,
+:root[data-theme="dark"] .cadastro-summary-card,
+:root:not([data-theme]) .table-card,
+:root[data-theme="dark"] .table-card,
+:root:not([data-theme]) .supplier-card,
+:root[data-theme="dark"] .supplier-card,
+:root:not([data-theme]) .inventory-item,
+:root[data-theme="dark"] .inventory-item,
+:root:not([data-theme]) .calculated-box,
+:root[data-theme="dark"] .calculated-box,
+:root:not([data-theme]) .import-file-box,
+:root[data-theme="dark"] .import-file-box,
+:root:not([data-theme]) .import-help-card,
+:root[data-theme="dark"] .import-help-card {
+background: var(--balu-white);
+border-color: var(--balu-border-soft);
+box-shadow: var(--shadow-soft);
+}
+
+:root:not([data-theme]) .cadastro-search,
+:root[data-theme="dark"] .cadastro-search,
+:root:not([data-theme]) .cadastro-filter,
+:root[data-theme="dark"] .cadastro-filter {
+background: color-mix(in srgb, var(--balu-white) 86%, var(--balu-bg));
+border-color: var(--balu-border);
+color: var(--balu-text);
+}
+
+:root:not([data-theme]) .data-table thead,
+:root[data-theme="dark"] .data-table thead,
+:root:not([data-theme]) .data-table tbody tr:hover,
+:root[data-theme="dark"] .data-table tbody tr:hover {
+background: color-mix(in srgb, var(--balu-white) 78%, var(--balu-bg));
+}
+
+:root:not([data-theme]) .data-table th,
+:root[data-theme="dark"] .data-table th {
+color: var(--balu-muted);
+border-color: var(--balu-border-soft);
+}
+
+:root:not([data-theme]) .data-table td,
+:root[data-theme="dark"] .data-table td {
+color: var(--balu-text);
+border-color: var(--balu-border-soft);
+}
+
+:root:not([data-theme]) .product-thumb,
+:root[data-theme="dark"] .product-thumb,
+:root:not([data-theme]) .product-thumb.placeholder,
+:root[data-theme="dark"] .product-thumb.placeholder {
+background: color-mix(in srgb, var(--balu-white) 76%, var(--balu-bg));
+color: var(--balu-purple-text);
+}
+
+.cadastro-summary,
+.kpi-grid {
+align-items: stretch;
+}

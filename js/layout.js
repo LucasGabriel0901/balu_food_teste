@@ -252,6 +252,9 @@ var topbar = document.createElement("header");
 topbar.className = "topbar";
 
 var pageTitle = getPageTitle(currentPage);
+var perfil = obterPerfilTopbar();
+var inicial = String(perfil.empresa || "C").charAt(0).toUpperCase();
+var temaAtual = typeof baluGetTheme === "function" ? baluGetTheme() : document.documentElement.getAttribute("data-theme") || "dark";
 
 topbar.innerHTML =
 "<div class='topbar-left'>" +
@@ -267,6 +270,11 @@ topbar.innerHTML =
 "</div>" +
 
 "<div class='topbar-actions'>" +
+  "<button type='button' class='topbar-icon-btn theme-toggle-btn' title='Alternar tema' id='themeToggleBtn'>" +
+    "<i data-lucide='" + (temaAtual === "dark" ? "sun" : "moon") + "'></i>" +
+    "<span>" + (temaAtual === "dark" ? "Claro" : "Escuro") + "</span>" +
+  "</button>" +
+
   "<button type='button' class='topbar-icon-btn' title='Notificações'>" +
     "<i data-lucide='bell'></i>" +
   "</button>" +
@@ -275,12 +283,35 @@ topbar.innerHTML =
     "<i data-lucide='settings'></i>" +
   "</button>" +
 
-  "<div class='user-chip'>" +
-    "<div class='user-avatar'>A</div>" +
+  "<div class='profile-menu'>" +
+    "<button type='button' class='user-chip profile-menu-button' id='profileMenuBtn' aria-expanded='false'>" +
+      "<div class='user-avatar'>" + escapeHtmlLayout(inicial) + "</div>" +
 
-    "<div class='user-info'>" +
-      "<strong>Admin</strong>" +
-      "<span>Conta de teste</span>" +
+      "<div class='user-info'>" +
+        "<strong>" + escapeHtmlLayout(perfil.empresa) + "</strong>" +
+        "<span>" + escapeHtmlLayout(perfil.plano) + " - " + escapeHtmlLayout(perfil.status) + "</span>" +
+      "</div>" +
+
+      "<i data-lucide='chevron-down' class='profile-chevron'></i>" +
+    "</button>" +
+
+    "<div class='profile-dropdown' id='profileDropdown'>" +
+      "<div class='profile-dropdown-header'>" +
+        "<strong>" + escapeHtmlLayout(perfil.empresa) + "</strong>" +
+        "<span>" + escapeHtmlLayout(perfil.status) + "</span>" +
+      "</div>" +
+
+      itemPerfilTopbar("Empresa", perfil.empresa) +
+      itemPerfilTopbar("CNPJ", perfil.cnpj) +
+      itemPerfilTopbar("Administrador", perfil.administrador) +
+      itemPerfilTopbar("E-mail", perfil.email) +
+      itemPerfilTopbar("Plano", perfil.plano) +
+      itemPerfilTopbar("Status", perfil.status) +
+
+      "<div class='profile-dropdown-actions'>" +
+        "<button type='button' class='btn btn-outline btn-small' id='profileConfigBtn'><i data-lucide='settings'></i>Configurações</button>" +
+        "<button type='button' class='btn btn-outline btn-small danger-soft' id='profileLogoutBtn'><i data-lucide='log-out'></i>Sair do sistema</button>" +
+      "</div>" +
     "</div>" +
   "</div>" +
 "</div>";
@@ -295,10 +326,61 @@ return topbar;
 
 function initTopbarEvents() {
 var settingsBtn = document.getElementById("topbarSettingsBtn");
+var profileBtn = document.getElementById("profileMenuBtn");
+var profileDropdown = document.getElementById("profileDropdown");
+var profileConfigBtn = document.getElementById("profileConfigBtn");
+var profileLogoutBtn = document.getElementById("profileLogoutBtn");
+var themeToggleBtn = document.getElementById("themeToggleBtn");
 
 if (settingsBtn) {
 settingsBtn.addEventListener("click", function () {
 window.location.href = "configuracoes.html";
+});
+}
+
+if (themeToggleBtn) {
+themeToggleBtn.addEventListener("click", function () {
+if (typeof baluToggleTheme === "function") {
+baluToggleTheme();
+} else {
+var atual = document.documentElement.getAttribute("data-theme") || "dark";
+document.documentElement.setAttribute("data-theme", atual === "dark" ? "light" : "dark");
+}
+
+atualizarBotaoTemaTopbar();
+});
+}
+
+if (profileBtn && profileDropdown) {
+profileBtn.addEventListener("click", function (event) {
+event.stopPropagation();
+var aberto = profileDropdown.classList.toggle("is-open");
+profileBtn.setAttribute("aria-expanded", aberto ? "true" : "false");
+});
+
+document.addEventListener("click", function (event) {
+if (!profileDropdown.contains(event.target) && !profileBtn.contains(event.target)) {
+  profileDropdown.classList.remove("is-open");
+  profileBtn.setAttribute("aria-expanded", "false");
+}
+});
+}
+
+if (profileConfigBtn) {
+profileConfigBtn.addEventListener("click", function () {
+window.location.href = "configuracoes.html";
+});
+}
+
+if (profileLogoutBtn) {
+profileLogoutBtn.addEventListener("click", function () {
+if (typeof baluLogout === "function") {
+  baluLogout();
+  return;
+}
+
+localStorage.removeItem("balu_auth_session");
+window.location.href = "login.html";
 });
 }
 }
@@ -314,6 +396,66 @@ overlay.className = "mobile-sidebar-overlay";
 overlay.id = "mobileSidebarOverlay";
 
 return overlay;
+}
+
+function obterPerfilTopbar() {
+var fallback = {
+empresa: "Conta Teste",
+cnpj: "Não informado",
+administrador: "Administrador",
+email: "Não informado",
+plano: "BALU Food",
+status: "Ativo"
+};
+
+try {
+var texto = localStorage.getItem("balu_configuracoes_empresa");
+var config = texto ? JSON.parse(texto) : {};
+
+return {
+empresa: config.nomeEmpresa || fallback.empresa,
+cnpj: config.cnpj || fallback.cnpj,
+administrador: config.responsavel || fallback.administrador,
+email: config.email || fallback.email,
+plano: config.plano || fallback.plano,
+status: config.statusConta || fallback.status
+};
+} catch (erro) {
+return fallback;
+}
+}
+
+function itemPerfilTopbar(label, value) {
+return "<div class='profile-info-row'>" +
+"<span>" + escapeHtmlLayout(label) + "</span>" +
+"<strong>" + escapeHtmlLayout(value || "Não informado") + "</strong>" +
+"</div>";
+}
+
+function atualizarBotaoTemaTopbar() {
+var botao = document.getElementById("themeToggleBtn");
+
+if (!botao) {
+return;
+}
+
+var tema = typeof baluGetTheme === "function" ? baluGetTheme() : document.documentElement.getAttribute("data-theme") || "dark";
+botao.innerHTML =
+"<i data-lucide='" + (tema === "dark" ? "sun" : "moon") + "'></i>" +
+"<span>" + (tema === "dark" ? "Claro" : "Escuro") + "</span>";
+
+if (window.lucide) {
+lucide.createIcons();
+}
+}
+
+function escapeHtmlLayout(value) {
+return String(value === null || value === undefined ? "" : value)
+.replace(/&/g, "&amp;")
+.replace(/</g, "&lt;")
+.replace(/>/g, "&gt;")
+.replace(/"/g, "&quot;")
+.replace(/'/g, "&#039;");
 }
 
 // ==============================

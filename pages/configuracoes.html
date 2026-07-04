@@ -52,7 +52,7 @@
 
       <div class="kpi-card green">
         <span>Plano atual</span>
-        <strong id="configResumoPlano">Plano único</strong>
+        <strong id="configResumoPlano">BALU Food</strong>
         <small>R$ 250,00/mês.</small>
       </div>
 
@@ -110,7 +110,9 @@
 
           <div class="form-field">
             <label for="configUnidade">Unidade</label>
-            <input type="text" id="configUnidade" placeholder="Ex: Matriz">
+            <select id="configUnidade">
+              <option value="Matriz">Matriz</option>
+            </select>
           </div>
 
           <div class="form-field">
@@ -132,6 +134,10 @@
             <label for="configCidade">Cidade</label>
             <input type="text" id="configCidade" placeholder="Ex: Guarulhos">
           </div>
+
+          <div class="form-field full">
+            <p class="config-logo-hint">Para a logo do cliente, use preferencialmente PNG com fundo transparente. O resultado fica mais limpo na barra lateral e nas telas administrativas.</p>
+          </div>
         </div>
       </div>
 
@@ -149,13 +155,25 @@
           <div class="form-field">
             <label for="configPlano">Plano *</label>
             <select id="configPlano" required>
-              <option value="Plano único">Plano único - R$ 250,00/mês</option>
+              <option value="BALU Food">BALU Food - R$ 250,00/mês</option>
             </select>
           </div>
 
           <div class="form-field">
             <label for="configValorPlano">Valor mensal</label>
             <input type="text" id="configValorPlano" inputmode="decimal" value="250,00" readonly>
+          </div>
+
+          <div class="form-field">
+            <label for="configValorAnual">Valor anual</label>
+            <input type="text" id="configValorAnual" inputmode="decimal" value="2500,00" readonly>
+          </div>
+
+          <div class="form-field">
+            <label for="configFormaPagamento">Forma de pagamento</label>
+            <select id="configFormaPagamento">
+              <option value="Cartão de crédito">Cartão de crédito</option>
+            </select>
           </div>
 
           <div class="form-field">
@@ -254,7 +272,7 @@
         <div class="form-grid">
           <div class="form-field full">
             <label for="configObservacoes">Observações</label>
-            <textarea id="configObservacoes" placeholder="Ex: Pagamento via Pix, suporte mensal incluso, observações administrativas..."></textarea>
+            <textarea id="configObservacoes" placeholder="Ex: suporte mensal incluso, preferências administrativas, observações do atendimento..."></textarea>
           </div>
         </div>
       </div>

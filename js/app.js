@@ -3,6 +3,17 @@
 // Funções reutilizáveis do sistema
 // ==============================
 
+(function aplicarTemaBaluAntesDoLayout() {
+try {
+var temaSalvo = localStorage.getItem("balu_theme") || "dark";
+document.documentElement.setAttribute("data-theme", temaSalvo === "light" ? "light" : "dark");
+document.documentElement.style.colorScheme = temaSalvo === "light" ? "light" : "dark";
+} catch (erro) {
+document.documentElement.setAttribute("data-theme", "dark");
+document.documentElement.style.colorScheme = "dark";
+}
+})();
+
 // Importante:
 // Nesta fase, alguns cálculos estão no JS apenas para protótipo visual.
 // Na versão real, os cálculos oficiais devem ficar no PHP/backend.
@@ -58,6 +69,37 @@ image: "IMG",
 power: "⏻",
 "log-out": "SAIR"
 };
+
+function baluGetTheme() {
+return document.documentElement.getAttribute("data-theme") || "dark";
+}
+
+function baluSetTheme(theme) {
+var tema = theme === "light" ? "light" : "dark";
+
+document.documentElement.setAttribute("data-theme", tema);
+document.documentElement.style.colorScheme = tema;
+
+try {
+localStorage.setItem("balu_theme", tema);
+} catch (erro) {
+console.warn("Não foi possível salvar o tema:", erro);
+}
+
+if (typeof baluRefreshIcons === "function") {
+baluRefreshIcons();
+}
+
+return tema;
+}
+
+function baluToggleTheme() {
+return baluSetTheme(baluGetTheme() === "dark" ? "light" : "dark");
+}
+
+window.baluGetTheme = baluGetTheme;
+window.baluSetTheme = baluSetTheme;
+window.baluToggleTheme = baluToggleTheme;
 
 function baluRefreshIcons() {
 if (window.lucide && typeof window.lucide.createIcons === "function") {

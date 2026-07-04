@@ -80,6 +80,8 @@ campo.id === "configEmail" ||
 campo.id === "configCidade" ||
 campo.id === "configPlano" ||
 campo.id === "configValorPlano" ||
+campo.id === "configValorAnual" ||
+campo.id === "configFormaPagamento" ||
 campo.id === "configStatusConta" ||
 campo.id === "configStatusPagamento" ||
 campo.id === "configDataInicio" ||
@@ -109,8 +111,10 @@ responsavel: "Lucas Gabriel",
 telefone: "",
 email: "lucas@balufood.com.br",
 cidade: "Guarulhos",
-plano: "Plano único",
+plano: "BALU Food",
 valorPlano: 250,
+valorAnual: 2500,
+formaPagamento: "Cartão de crédito",
 statusConta: "Ativo",
 statusPagamento: "Em dia",
 dataInicio: formatarDataInput(hoje),
@@ -131,14 +135,16 @@ var config = carregarConfiguracoesLocal();
 setValueConfig("configNomeEmpresa", config.nomeEmpresa);
 setValueConfig("configCnpj", config.cnpj);
 setValueConfig("configSegmento", config.segmento);
-setValueConfig("configUnidade", config.unidade);
+setValueConfig("configUnidade", "Matriz");
 setValueConfig("configResponsavel", config.responsavel);
 setValueConfig("configTelefone", config.telefone);
 setValueConfig("configEmail", config.email);
 setValueConfig("configCidade", config.cidade);
 
-setValueConfig("configPlano", "Plano único");
-setValueConfig("configValorPlano", numeroParaInputConfig(250));
+setValueConfig("configPlano", "BALU Food");
+setValueConfig("configValorPlano", "250,00");
+setValueConfig("configValorAnual", "2500,00");
+setValueConfig("configFormaPagamento", "Cartão de crédito");
 setValueConfig("configStatusConta", config.statusConta);
 setValueConfig("configStatusPagamento", config.statusPagamento);
 setValueConfig("configDataInicio", config.dataInicio);
@@ -158,7 +164,7 @@ atualizarResumoConfiguracoes();
 function salvarConfiguracoes() {
 var nomeEmpresa = getValueConfig("configNomeEmpresa");
 var responsavel = getValueConfig("configResponsavel");
-var plano = "Plano único";
+var plano = "BALU Food";
 
 if (!nomeEmpresa) {
 mensagemConfiguracoes("Informe o nome da empresa.", "warning");
@@ -179,14 +185,16 @@ var config = {
 nomeEmpresa: nomeEmpresa,
 cnpj: getValueConfig("configCnpj"),
 segmento: getValueConfig("configSegmento"),
-unidade: getValueConfig("configUnidade"),
+unidade: "Matriz",
 responsavel: responsavel,
 telefone: getValueConfig("configTelefone"),
 email: getValueConfig("configEmail"),
 cidade: getValueConfig("configCidade"),
 
-plano: "Plano único",
+plano: "BALU Food",
 valorPlano: 250,
+valorAnual: 2500,
+formaPagamento: "Cartão de crédito",
 statusConta: getValueConfig("configStatusConta"),
 statusPagamento: getValueConfig("configStatusPagamento"),
 dataInicio: getValueConfig("configDataInicio"),
@@ -253,7 +261,7 @@ mensagemConfiguracoes("Erro ao salvar configurações.", "danger");
 
 function atualizarResumoConfiguracoes() {
 var nomeEmpresa = getValueConfig("configNomeEmpresa") || "Empresa Teste BALU";
-var plano = "Plano único";
+var plano = "BALU Food";
 var statusConta = getValueConfig("configStatusConta") || "Ativo";
 var statusPagamento = getValueConfig("configStatusPagamento") || "Em dia";
 
@@ -264,8 +272,10 @@ setTextConfig("configResumoPagamento", statusPagamento);
 }
 
 function aplicarValorAutomaticoPlano() {
-setValueConfig("configPlano", "Plano único");
-setValueConfig("configValorPlano", "250");
+setValueConfig("configPlano", "BALU Food");
+setValueConfig("configValorPlano", "250,00");
+setValueConfig("configValorAnual", "2500,00");
+setValueConfig("configFormaPagamento", "Cartão de crédito");
 }
 
 function getValueConfig(id) {

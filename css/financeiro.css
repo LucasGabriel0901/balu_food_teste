@@ -704,3 +704,91 @@ grid-template-columns: 1fr;
     min-height: 46px;
   }
 }
+
+/* ==============================
+TEMA ESCURO E SIMETRIA FINANCEIRA
+================================= */
+
+:root:not([data-theme]) .finance-panel,
+:root[data-theme="dark"] .finance-panel,
+:root:not([data-theme]) .finance-card,
+:root[data-theme="dark"] .finance-card,
+:root:not([data-theme]) .category-card,
+:root[data-theme="dark"] .category-card,
+:root:not([data-theme]) .calc-flow-card,
+:root[data-theme="dark"] .calc-flow-card,
+:root:not([data-theme]) .expense-type-card,
+:root[data-theme="dark"] .expense-type-card,
+:root:not([data-theme]) .inventory-item,
+:root[data-theme="dark"] .inventory-item {
+background: var(--balu-white);
+border-color: var(--balu-border-soft);
+box-shadow: var(--shadow-soft);
+}
+
+:root:not([data-theme]) .finance-panel-header h2,
+:root[data-theme="dark"] .finance-panel-header h2,
+:root:not([data-theme]) .finance-panel-header h3,
+:root[data-theme="dark"] .finance-panel-header h3,
+:root:not([data-theme]) .finance-card strong,
+:root[data-theme="dark"] .finance-card strong,
+:root:not([data-theme]) .calc-flow-card strong,
+:root[data-theme="dark"] .calc-flow-card strong,
+:root:not([data-theme]) .category-card strong,
+:root[data-theme="dark"] .category-card strong {
+color: var(--balu-text);
+}
+
+:root:not([data-theme]) .finance-panel-header p,
+:root[data-theme="dark"] .finance-panel-header p,
+:root:not([data-theme]) .finance-card span,
+:root[data-theme="dark"] .finance-card span,
+:root:not([data-theme]) .finance-card small,
+:root[data-theme="dark"] .finance-card small,
+:root:not([data-theme]) .calc-flow-card span,
+:root[data-theme="dark"] .calc-flow-card span,
+:root:not([data-theme]) .category-card span,
+:root[data-theme="dark"] .category-card span,
+:root:not([data-theme]) .category-card small,
+:root[data-theme="dark"] .category-card small {
+color: var(--balu-muted);
+}
+
+:root:not([data-theme]) .calc-flow-symbol,
+:root[data-theme="dark"] .calc-flow-symbol {
+background: var(--balu-purple-bg);
+color: var(--balu-purple-text);
+}
+
+:root:not([data-theme]) .calc-flow-card.result,
+:root[data-theme="dark"] .calc-flow-card.result,
+:root:not([data-theme]) .cmv-result-box,
+:root[data-theme="dark"] .cmv-result-box {
+background: linear-gradient(135deg, #047857, #22c55e);
+box-shadow: 0 22px 58px rgba(16, 185, 129, 0.24);
+}
+
+:root:not([data-theme]) .inventory-item-grid input,
+:root[data-theme="dark"] .inventory-item-grid input,
+:root:not([data-theme]) .inventory-item-grid select,
+:root[data-theme="dark"] .inventory-item-grid select {
+background: color-mix(in srgb, var(--balu-white) 86%, var(--balu-bg));
+border-color: var(--balu-border);
+color: var(--balu-text);
+}
+
+:root:not([data-theme]) .inventory-item-grid .calculated-field,
+:root[data-theme="dark"] .inventory-item-grid .calculated-field {
+background: color-mix(in srgb, var(--balu-bg) 58%, var(--balu-white));
+color: var(--balu-text);
+}
+
+.finance-panel,
+.table-card,
+.cmv-result-box {
+border-radius: 16px;
+}
+
+.calc-flow {
+gap: 10px;
+}

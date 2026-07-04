@@ -129,6 +129,55 @@
             </div>
           </div>
         </div>
+
+        <div class="finance-panel help-feedback-panel">
+          <div class="finance-panel-header">
+            <div>
+              <h2>Feedback dos testes</h2>
+              <p>Registre pontos percebidos durante a apresentação ou uso inicial do sistema.</p>
+            </div>
+
+            <span class="badge green">Feedback</span>
+          </div>
+
+          <form id="formFeedbackAjuda" class="form-grid help-feedback-form">
+            <div class="form-field">
+              <label for="feedbackNome">Nome</label>
+              <input type="text" id="feedbackNome" placeholder="Ex: Lucas">
+            </div>
+
+            <div class="form-field">
+              <label for="feedbackModulo">Módulo</label>
+              <select id="feedbackModulo">
+                <option value="Geral">Geral</option>
+                <option value="Insumos">Insumos</option>
+                <option value="Compras">Compras</option>
+                <option value="CMV">CMV</option>
+                <option value="Relatórios">Relatórios</option>
+                <option value="Painel de Controle">Painel de Controle</option>
+              </select>
+            </div>
+
+            <div class="form-field full">
+              <label for="feedbackMensagem">Feedback</label>
+              <textarea id="feedbackMensagem" placeholder="Descreva o que ficou bom ou o que precisa de ajuste visual."></textarea>
+            </div>
+
+            <div class="form-field full">
+              <button type="submit" class="btn btn-primary">
+                <i data-lucide="send"></i>
+                Registrar feedback
+              </button>
+            </div>
+          </form>
+
+          <div class="feedback-list" id="feedbackAjudaLista">
+            <div class="empty-state-alert">
+              <strong>Nenhum feedback registrado ainda.</strong>
+              <p class="text-muted">Os registros salvos neste navegador aparecerão aqui.</p>
+            </div>
+          </div>
+        </div>
       </section>
     </main>
   </div>

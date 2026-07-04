@@ -795,3 +795,89 @@ font-size: 20px;
 align-items: flex-start;
 }
 }
+
+/* ==============================
+LOGIN - TEMA ESCURO PREMIUM
+================================= */
+
+:root:not([data-theme]) body,
+:root[data-theme="dark"] body {
+background: #020617;
+color: #f8fafc;
+}
+
+:root:not([data-theme]) .auth-page,
+:root[data-theme="dark"] .auth-page {
+background:
+radial-gradient(circle at 12% 14%, rgba(16, 185, 129, 0.18), transparent 28%),
+radial-gradient(circle at 92% 86%, rgba(245, 158, 11, 0.12), transparent 26%),
+#020617;
+}
+
+:root:not([data-theme]) .auth-food-side,
+:root[data-theme="dark"] .auth-food-side {
+background:
+linear-gradient(135deg, rgba(2, 6, 23, 0.20), rgba(15, 23, 42, 0.78)),
+radial-gradient(circle at 30% 25%, rgba(34, 197, 94, 0.16), transparent 28%),
+radial-gradient(circle at 70% 75%, rgba(245, 158, 11, 0.14), transparent 24%),
+#07111f;
+}
+
+:root:not([data-theme]) .auth-form-side,
+:root[data-theme="dark"] .auth-form-side {
+background: transparent;
+}
+
+:root:not([data-theme]) .login-card,
+:root[data-theme="dark"] .login-card,
+:root:not([data-theme]) .auth-info-card,
+:root[data-theme="dark"] .auth-info-card,
+:root:not([data-theme]) .login-security-box,
+:root[data-theme="dark"] .login-security-box,
+:root:not([data-theme]) .login-test-box,
+:root[data-theme="dark"] .login-test-box {
+background: rgba(15, 23, 42, 0.88);
+border-color: #263449;
+box-shadow: 0 28px 80px rgba(0, 0, 0, 0.38);
+}
+
+:root:not([data-theme]) .login-heading h1,
+:root[data-theme="dark"] .login-heading h1,
+:root:not([data-theme]) .auth-info-card strong,
+:root[data-theme="dark"] .auth-info-card strong,
+:root:not([data-theme]) .login-security-box strong,
+:root[data-theme="dark"] .login-security-box strong {
+color: #f8fafc;
+}
+
+:root:not([data-theme]) .login-heading p,
+:root[data-theme="dark"] .login-heading p,
+:root:not([data-theme]) .login-heading span,
+:root[data-theme="dark"] .login-heading span,
+:root:not([data-theme]) .auth-info-card span,
+:root[data-theme="dark"] .auth-info-card span,
+:root:not([data-theme]) .login-security-box span,
+:root[data-theme="dark"] .login-security-box span {
+color: #94a3b8;
+}
+
+:root:not([data-theme]) .auth-input-wrap,
+:root[data-theme="dark"] .auth-input-wrap,
+:root:not([data-theme]) .social-login-btn,
+:root[data-theme="dark"] .social-login-btn {
+background: #111827;
+border-color: #263449;
+color: #f8fafc;
+}
+
+:root:not([data-theme]) .auth-input-wrap input,
+:root[data-theme="dark"] .auth-input-wrap input {
+background: transparent;
+color: #f8fafc;
+}
+
+:root:not([data-theme]) .login-submit-btn,
+:root[data-theme="dark"] .login-submit-btn {
+background: linear-gradient(135deg, #10b981, #22c55e);
+box-shadow: 0 20px 46px rgba(16, 185, 129, 0.28);
+}
